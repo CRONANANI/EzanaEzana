@@ -1,0 +1,167 @@
+@model Ezana.ViewModels.GRPVViewModel
+@{
+    ViewData["Title"] = "GRPV Risk Tolerance Analysis";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4">GRPV Risk Tolerance Analysis</h1>
+            <p class="lead">Quantify your market risk tolerance using our proprietary GRPV model (Growth, Risk, Profit, Valuation).</p>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Analyze a Stock</h5>
+                </div>
+                <div class="card-body">
+                    <p>Select a stock to analyze its GRPV metrics and determine your risk tolerance based on our proprietary model.</p>
+                    
+                    <form method="get" asp-action="Index" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for stocks..." name="searchQuery" value="@Model.SearchQuery">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                    
+                    @if (Model.AvailableStocks.Any())
+                    {
+                        <form method="post" asp-action="Calculate">
+                            <div class="list-group mb-3">
+                                @foreach (var stock in Model.AvailableStocks)
+                                {
+                                    <button type="submit" name="stockSymbol" value="@stock.Key" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@stock.Key</strong>
+                                            <span class="ms-2">@stock.Value</span>
+                                        </div>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.SearchQuery))
+                    {
+                        <div class="alert alert-info">
+                            No stocks found matching your search query. Please try a different search term.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Your GRPV Analyses</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.UserGRPVModels.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Company</th>
+                                        <th class="text-center">Score</th>
+                                        <th class="text-center">Date</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var grpv in Model.UserGRPVModels)
+                                    {
+                                        <tr>
+                                            <td><strong>@grpv.StockSymbol</strong></td>
+                                            <td>@grpv.CompanyName</td>
+                                            <td class="text-center">
+                                                @{
+                                                    var scoreClass = grpv.OverallScore >= 70 ? "text-success" :
+                                                                    (grpv.OverallScore >= 40 ? "text-warning" : "text-danger");
+                                                }
+                                                <span class="@scoreClass">@grpv.OverallScore.ToString("F1")</span>
+                                            </td>
+                                            <td class="text-center">@grpv.UpdatedAt.ToString("MM/dd/yyyy")</td>
+                                            <td class="text-end">
+                                                <a asp-action="Details" asp-route-id="@grpv.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-graph-up"></i> Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            You haven't analyzed any stocks yet. Select a stock from the list to get started.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">About the GRPV Model</h5>
+                </div>
+                <div class="card-body">
+                    <p>The GRPV model is our proprietary approach to quantifying market risk tolerance through four key dimensions:</p>
+                    
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100 border-primary">
+                                <div class="card-header bg-primary text-white">Growth</div>
+                                <div class="card-body">
+                                    <p>Measures quarterly revenue growth for the past two years, providing insight into a company's expansion trajectory.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100 border-danger">
+                                <div class="card-header bg-danger text-white">Risk</div>
+                                <div class="card-body">
+                                    <p>Evaluates debt-to-equity ratio for the past 5 years and the stock's beta, indicating stability and market correlation.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-header bg-success text-white">Profit</div>
+                                <div class="card-body">
+                                    <p>Analyzes profit margin, operating margin, dividend yield, and EBITDA/Sales for the past 3 years.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-header bg-warning text-dark">Valuation</div>
+                                <div class="card-body">
+                                    <p>Examines market cap relative to industry, P/E ratio, PEG ratio, P/B ratio, EV/revenue, and EPS for the last 3 years.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

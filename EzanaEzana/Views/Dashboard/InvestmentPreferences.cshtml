@@ -1,0 +1,153 @@
+@model Ezana.ViewModels.InvestmentPreferenceViewModel
+@{
+    ViewData["Title"] = "Investment Preferences";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">Investment Preferences</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        Set your investment preferences to get personalized recommendations tailored to your financial goals and risk tolerance.
+                    </p>
+                    
+                    <form asp-action="UpdateInvestmentPreferences" method="post">
+                        <div class="mb-4">
+                            <label asp-for="RiskTolerance" class="form-label fw-bold">Risk Tolerance</label>
+                            <div class="mb-2 text-muted">How comfortable are you with investment risk?</div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Conservative</span>
+                                <span>Moderate</span>
+                                <span>Aggressive</span>
+                            </div>
+                            <input type="range" class="form-range" min="1" max="10" step="1" asp-for="RiskTolerance" id="riskToleranceSlider">
+                            <div class="text-center mt-2">
+                                <span id="riskToleranceValue">@Model.RiskTolerance</span>/10
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Portfolio Allocation</label>
+                            <div class="mb-2 text-muted">How would you like to allocate your investments? (Total must equal 100%)</div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="StockAllocation" class="form-label">Stocks</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control allocation-input" asp-for="StockAllocation" min="0" max="100">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="BondAllocation" class="form-label">Bonds</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control allocation-input" asp-for="BondAllocation" min="0" max="100">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="CashAllocation" class="form-label">Cash</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control allocation-input" asp-for="CashAllocation" min="0" max="100">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="AlternativeAllocation" class="form-label">Alternative Investments</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control allocation-input" asp-for="AlternativeAllocation" min="0" max="100">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info mt-2">
+                                <div class="d-flex justify-content-between">
+                                    <span>Total:</span>
+                                    <span id="totalAllocation">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="InvestmentHorizon" class="form-label fw-bold">Investment Horizon</label>
+                            <div class="mb-2 text-muted">How long do you plan to invest before needing the money?</div>
+                            <select class="form-select" asp-for="InvestmentHorizon">
+                                <option value="Short-term">Short-term (0-3 years)</option>
+                                <option value="Medium-term">Medium-term (3-7 years)</option>
+                                <option value="Long-term">Long-term (7+ years)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="InvestmentGoals" class="form-label fw-bold">Investment Goals</label>
+                            <div class="mb-2 text-muted">What are you investing for?</div>
+                            <input type="text" class="form-control" asp-for="InvestmentGoals" placeholder="Retirement, Education, Home Purchase, etc.">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" asp-for="ESGFocus" id="esgFocus">
+                                <label class="form-check-label" for="esgFocus">
+                                    Focus on ESG (Environmental, Social, Governance) investments
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Save Preferences</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Risk tolerance slider
+            const riskSlider = document.getElementById('riskToleranceSlider');
+            const riskValue = document.getElementById('riskToleranceValue');
+            
+            riskSlider.addEventListener('input', function() {
+                riskValue.textContent = this.value;
+            });
+            
+            // Portfolio allocation
+            const allocationInputs = document.querySelectorAll('.allocation-input');
+            const totalAllocation = document.getElementById('totalAllocation');
+            
+            function updateTotal() {
+                let total = 0;
+                allocationInputs.forEach(input => {
+                    total += parseInt(input.value) || 0;
+                });
+                
+                totalAllocation.textContent = total + '%';
+                
+                if (total !== 100) {
+                    totalAllocation.classList.add('text-danger');
+                    totalAllocation.classList.remove('text-success');
+                } else {
+                    totalAllocation.classList.add('text-success');
+                    totalAllocation.classList.remove('text-danger');
+                }
+            }
+            
+            allocationInputs.forEach(input => {
+                input.addEventListener('input', updateTotal);
+            });
+            
+            // Initialize
+            updateTotal();
+        });
+    </script>
+} 

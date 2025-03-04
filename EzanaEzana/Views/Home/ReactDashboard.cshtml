@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Investment Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-3">React Investment Dashboard</h1>
+            <p class="lead">
+                This page demonstrates a more complex React application for investment analytics.
+            </p>
+        </div>
+    </div>
+
+    <div id="react-app">
+        <div class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/dist/main.bundle.js" asp-append-version="true"></script>
+} 

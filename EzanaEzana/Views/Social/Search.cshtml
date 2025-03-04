@@ -1,0 +1,125 @@
+@model UserSearchViewModel
+@{
+    ViewData["Title"] = "Find Users";
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-3">Find Users</h1>
+            <form method="get" action="@Url.Action("Search", "Social")" class="mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="searchTerm" value="@Model.SearchTerm" 
+                           placeholder="Search by username or name..." aria-label="Search users">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SearchTerm))
+    {
+        <div class="row">
+            <div class="col-12">
+                @if (Model.Results.Count == 0)
+                {
+                    <div class="alert alert-info">
+                        No users found matching "<strong>@Model.SearchTerm</strong>".
+                    </div>
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Search Results</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            @foreach (var user in Model.Results)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            @if (string.IsNullOrEmpty(user.ProfilePictureUrl))
+                                            {
+                                                <div class="avatar bg-primary text-white rounded-circle">
+                                                    <span>@(user.DisplayName?.Substring(0, 1).ToUpper() ?? user.Username.Substring(0, 1).ToUpper())</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <img src="@user.ProfilePictureUrl" class="rounded-circle" width="48" height="48" alt="@user.DisplayName">
+                                            }
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h5 class="mb-0">
+                                                <a href="@Url.Action("Profile", "Social", new { username = user.Username })" class="text-decoration-none">
+                                                    @user.DisplayName
+                                                </a>
+                                            </h5>
+                                            <p class="text-muted mb-0">@@@user.Username</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            @if (user.IsFriend)
+                                            {
+                                                <a href="@Url.Action("Messages", "Social", new { userId = user.UserId })" class="btn btn-outline-primary btn-sm me-2">
+                                                    <i class="bi bi-chat-dots"></i> Message
+                                                </a>
+                                                <form method="post" action="@Url.Action("RemoveFriend", "Social")" class="d-inline">
+                                                    <input type="hidden" name="friendId" value="@user.UserId" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to remove this friend?')">
+                                                        <i class="bi bi-person-dash"></i> Remove
+                                                    </button>
+                                                </form>
+                                            }
+                                            else if (user.HasSentFriendRequest)
+                                            {
+                                                <span class="badge bg-info">Request Sent</span>
+                                            }
+                                            else if (user.HasPendingFriendRequest)
+                                            {
+                                                <span class="badge bg-warning">Pending Request</span>
+                                            }
+                                            else
+                                            {
+                                                <form method="post" action="@Url.Action("SendFriendRequest", "Social")" class="d-inline">
+                                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-person-plus"></i> Add Friend
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i> Enter a name or username to search for users.
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .avatar {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+</style> 

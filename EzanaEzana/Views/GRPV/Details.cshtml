@@ -1,0 +1,377 @@
+@model Ezana.ViewModels.GRPVDetailViewModel
+@{
+    ViewData["Title"] = $"GRPV Analysis - {Model.Model.StockSymbol}";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">GRPV Analysis</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Model.StockSymbol</li>
+                </ol>
+            </nav>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">
+                    @Model.Model.StockSymbol
+                    <small class="text-muted fs-4">@Model.Model.CompanyName</small>
+                </h1>
+                <form method="post" asp-action="Delete" asp-route-id="@Model.Model.Id" onsubmit="return confirm('Are you sure you want to delete this analysis?');">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete Analysis
+                    </button>
+                </form>
+            </div>
+            <p class="lead">GRPV Analysis as of @Model.Model.UpdatedAt.ToString("MMMM d, yyyy")</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Overall GRPV Score</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-1 mb-3">@Model.Model.OverallScore.ToString("F1")</div>
+                    <div class="h3 mb-4">@Model.OverallCategory</div>
+                    
+                    <div class="progress mb-4" style="height: 30px;">
+                        @{
+                            var scoreColor = Model.Model.OverallScore >= 70 ? "bg-success" :
+                                           (Model.Model.OverallScore >= 40 ? "bg-warning" : "bg-danger");
+                        }
+                        <div class="progress-bar @scoreColor" role="progressbar" style="width: @Model.Model.OverallScore%;" 
+                             aria-valuenow="@Model.Model.OverallScore" aria-valuemin="0" aria-valuemax="100">
+                            @Model.Model.OverallScore.ToString("F1")
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <p class="mb-0">
+                            <strong>Risk Tolerance:</strong> @Model.RiskToleranceCategory
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">GRPV Component Scores</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><strong>Growth:</strong> @Model.GrowthCategory</span>
+                            <span>@Model.Model.GrowthScore.ToString("F1")</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: @Model.Model.GrowthScore%;" 
+                                 aria-valuenow="@Model.Model.GrowthScore" aria-valuemin="0" aria-valuemax="100">
+                                @Model.Model.GrowthScore.ToString("F1")
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><strong>Risk:</strong> @Model.RiskToleranceCategory</span>
+                            <span>@Model.Model.RiskScore.ToString("F1")</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: @Model.Model.RiskScore%;" 
+                                 aria-valuenow="@Model.Model.RiskScore" aria-valuemin="0" aria-valuemax="100">
+                                @Model.Model.RiskScore.ToString("F1")
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><strong>Profitability:</strong> @Model.ProfitabilityCategory</span>
+                            <span>@Model.Model.ProfitabilityScore.ToString("F1")</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @Model.Model.ProfitabilityScore%;" 
+                                 aria-valuenow="@Model.Model.ProfitabilityScore" aria-valuemin="0" aria-valuemax="100">
+                                @Model.Model.ProfitabilityScore.ToString("F1")
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span><strong>Valuation:</strong> @Model.ValuationCategory</span>
+                            <span>@Model.Model.ValuationScore.ToString("F1")</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: @Model.Model.ValuationScore%;" 
+                                 aria-valuenow="@Model.Model.ValuationScore" aria-valuemin="0" aria-valuemax="100">
+                                @Model.Model.ValuationScore.ToString("F1")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Growth Factors</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Factor</th>
+                                    <th class="text-end">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var factor in Model.Model.GrowthFactors.OrderBy(f => f.Key))
+                                {
+                                    <tr>
+                                        <td>@factor.Key</td>
+                                        <td class="text-end">@(factor.Value.ToString("P2"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Profitability Factors</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Factor</th>
+                                    <th class="text-end">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var factor in Model.Model.ProfitabilityFactors.OrderBy(f => f.Key))
+                                {
+                                    <tr>
+                                        <td>@factor.Key</td>
+                                        <td class="text-end">
+                                            @if (factor.Key.Contains("Dividend"))
+                                            {
+                                                @(factor.Value.ToString("P2"))
+                                            }
+                                            else
+                                            {
+                                                @(factor.Value.ToString("P2"))
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">Risk Factors</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Factor</th>
+                                    <th class="text-end">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var factor in Model.Model.RiskFactors.OrderBy(f => f.Key))
+                                {
+                                    <tr>
+                                        <td>@factor.Key</td>
+                                        <td class="text-end">
+                                            @if (factor.Key == "Beta")
+                                            {
+                                                @(factor.Value.ToString("F2"))
+                                            }
+                                            else
+                                            {
+                                                @(factor.Value.ToString("F2"))
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">Valuation Factors</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Factor</th>
+                                    <th class="text-end">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var factor in Model.Model.ValuationFactors.OrderBy(f => f.Key))
+                                {
+                                    <tr>
+                                        <td>@factor.Key</td>
+                                        <td class="text-end">
+                                            @if (factor.Key.Contains("EPS"))
+                                            {
+                                                @(factor.Value.ToString("C2"))
+                                            }
+                                            else if (factor.Key.Contains("Market Cap"))
+                                            {
+                                                @(factor.Value.ToString("F2")) <span class="text-muted">x</span>
+                                            }
+                                            else
+                                            {
+                                                @(factor.Value.ToString("F2"))
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">Investment Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <p>Based on the GRPV analysis of <strong>@Model.Model.StockSymbol</strong>, here are our investment recommendations:</p>
+                    
+                    @{
+                        var riskLevel = Model.Model.RiskScore >= 80 ? "very conservative" :
+                                      (Model.Model.RiskScore >= 60 ? "conservative" :
+                                      (Model.Model.RiskScore >= 40 ? "moderate" :
+                                      (Model.Model.RiskScore >= 20 ? "aggressive" : "very aggressive")));
+                                      
+                        var growthLevel = Model.Model.GrowthScore >= 70 ? "strong" :
+                                        (Model.Model.GrowthScore >= 40 ? "moderate" : "weak");
+                                        
+                        var profitLevel = Model.Model.ProfitabilityScore >= 70 ? "highly profitable" :
+                                        (Model.Model.ProfitabilityScore >= 40 ? "moderately profitable" : "marginally profitable");
+                                        
+                        var valuationLevel = Model.Model.ValuationScore >= 70 ? "attractively valued" :
+                                          (Model.Model.ValuationScore >= 40 ? "fairly valued" : "overvalued");
+                    }
+                    
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item">
+                            <strong>Risk Profile:</strong> This stock has a <strong>@riskLevel</strong> risk profile, making it 
+                            @if (Model.Model.RiskScore >= 60)
+                            {
+                                <span>suitable for risk-averse investors seeking stability.</span>
+                            }
+                            else if (Model.Model.RiskScore >= 40)
+                            {
+                                <span>appropriate for investors with a balanced risk approach.</span>
+                            }
+                            else
+                            {
+                                <span>best suited for investors with high risk tolerance seeking growth opportunities.</span>
+                            }
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Growth Outlook:</strong> The company shows <strong>@growthLevel</strong> growth potential based on historical revenue trends.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Profitability:</strong> The company is <strong>@profitLevel</strong>, indicating 
+                            @if (Model.Model.ProfitabilityScore >= 60)
+                            {
+                                <span>strong operational efficiency and potential for sustainable returns.</span>
+                            }
+                            else if (Model.Model.ProfitabilityScore >= 40)
+                            {
+                                <span>reasonable operational efficiency with room for improvement.</span>
+                            }
+                            else
+                            {
+                                <span>challenges in operational efficiency that may impact long-term returns.</span>
+                            }
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Valuation:</strong> The stock appears <strong>@valuationLevel</strong> relative to its peers and historical metrics.
+                        </li>
+                    </ul>
+                    
+                    <div class="alert @(Model.Model.OverallScore >= 70 ? "alert-success" : (Model.Model.OverallScore >= 40 ? "alert-warning" : "alert-danger"))">
+                        <h5>Overall Recommendation:</h5>
+                        @if (Model.Model.OverallScore >= 70)
+                        {
+                            <p class="mb-0">
+                                <strong>@Model.Model.StockSymbol</strong> appears to be a strong investment opportunity with a favorable balance of growth, risk, profitability, and valuation. 
+                                Consider including this stock as a core holding in your portfolio.
+                            </p>
+                        }
+                        else if (Model.Model.OverallScore >= 50)
+                        {
+                            <p class="mb-0">
+                                <strong>@Model.Model.StockSymbol</strong> presents a moderate investment opportunity with a reasonable balance of GRPV factors. 
+                                Consider a modest position as part of a diversified portfolio.
+                            </p>
+                        }
+                        else if (Model.Model.OverallScore >= 30)
+                        {
+                            <p class="mb-0">
+                                <strong>@Model.Model.StockSymbol</strong> shows some concerning metrics in the GRPV analysis. 
+                                Exercise caution and consider limiting exposure or waiting for improvements in key metrics.
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="mb-0">
+                                <strong>@Model.Model.StockSymbol</strong> demonstrates significant weaknesses across multiple GRPV dimensions. 
+                                We recommend avoiding this investment until fundamental improvements are evident.
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any client-side JavaScript for charts or interactivity here
+        });
+    </script>
+} 

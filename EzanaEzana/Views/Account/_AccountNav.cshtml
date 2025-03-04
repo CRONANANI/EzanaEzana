@@ -1,0 +1,30 @@
+<div class="list-group mb-4">
+    <a asp-controller="Account" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+        <i class="bi bi-person"></i> Profile
+    </a>
+    <a asp-controller="Account" asp-action="ChangePassword" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "ChangePassword" ? "active" : "")">
+        <i class="bi bi-key"></i> Change Password
+    </a>
+    <a asp-controller="Dashboard" asp-action="InvestmentPreferences" class="list-group-item list-group-item-action">
+        <i class="bi bi-sliders"></i> Investment Preferences
+    </a>
+    <a asp-controller="Account" asp-action="DeleteAccount" class="list-group-item list-group-item-action text-danger">
+        <i class="bi bi-trash"></i> Delete Account
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Quick Links</h5>
+    </div>
+    <div class="card-body">
+        <div class="list-group">
+            <a asp-controller="Dashboard" asp-action="Index" class="list-group-item list-group-item-action">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a asp-controller="GRPV" asp-action="Index" class="list-group-item list-group-item-action">
+                <i class="bi bi-bar-chart-fill"></i> GRPV Analysis
+            </a>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,195 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = $"{Model.DisplayName}'s Profile";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    @if (string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                    {
+                        <div class="avatar bg-primary text-white rounded-circle mx-auto mb-3">
+                            <span>@(Model.DisplayName?.Substring(0, 1).ToUpper() ?? Model.Username.Substring(0, 1).ToUpper())</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@Model.ProfilePictureUrl" class="rounded-circle img-fluid mb-3" style="max-width: 150px;" alt="@Model.DisplayName">
+                    }
+                    <h3 class="h4 mb-1">@Model.DisplayName</h3>
+                    <p class="text-muted mb-3">@@@Model.Username</p>
+
+                    @if (!Model.IsCurrentUser)
+                    {
+                        <div class="d-grid gap-2 mb-3">
+                            @switch (Model.FriendshipStatus)
+                            {
+                                case Ezana.ViewModels.FriendshipStatus.Friends:
+                                    <a href="@Url.Action("Messages", "Social", new { userId = Model.UserId })" class="btn btn-primary">
+                                        <i class="bi bi-chat-dots"></i> Message
+                                    </a>
+                                    <form method="post" action="@Url.Action("RemoveFriend", "Social")">
+                                        <input type="hidden" name="friendId" value="@Model.UserId" />
+                                        <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to remove this friend?')">
+                                            <i class="bi bi-person-dash"></i> Remove Friend
+                                        </button>
+                                    </form>
+                                    break;
+                                case Ezana.ViewModels.FriendshipStatus.RequestSent:
+                                    <form method="post" action="@Url.Action("CancelFriendRequest", "Social")">
+                                        <input type="hidden" name="requestId" value="@Model.FriendshipId" />
+                                        <button type="submit" class="btn btn-outline-secondary w-100">
+                                            <i class="bi bi-x-circle"></i> Cancel Friend Request
+                                        </button>
+                                    </form>
+                                    break;
+                                case Ezana.ViewModels.FriendshipStatus.RequestReceived:
+                                    <div class="d-flex gap-2">
+                                        <form method="post" action="@Url.Action("AcceptFriendRequest", "Social")" class="flex-grow-1">
+                                            <input type="hidden" name="requestId" value="@Model.FriendshipId" />
+                                            <button type="submit" class="btn btn-success w-100">
+                                                <i class="bi bi-check-circle"></i> Accept
+                                            </button>
+                                        </form>
+                                        <form method="post" action="@Url.Action("RejectFriendRequest", "Social")" class="flex-grow-1">
+                                            <input type="hidden" name="requestId" value="@Model.FriendshipId" />
+                                            <button type="submit" class="btn btn-outline-danger w-100">
+                                                <i class="bi bi-x-circle"></i> Decline
+                                            </button>
+                                        </form>
+                                    </div>
+                                    break;
+                                default:
+                                    <form method="post" action="@Url.Action("SendFriendRequest", "Social")">
+                                        <input type="hidden" name="userId" value="@Model.UserId" />
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-person-plus"></i> Add Friend
+                                        </button>
+                                    </form>
+                                    break;
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "Account")" class="btn btn-outline-primary mb-3">
+                            <i class="bi bi-pencil"></i> Edit Profile
+                        </a>
+                    }
+
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="px-3 text-center border-end">
+                            <h5 class="mb-0">@Model.FriendsCount</h5>
+                            <small class="text-muted">Friends</small>
+                        </div>
+                        <div class="px-3 text-center">
+                            <h5 class="mb-0">@(Model.JoinedDate.ToString("MMM yyyy"))</h5>
+                            <small class="text-muted">Joined</small>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Bio))
+                    {
+                        <div class="text-start">
+                            <h6 class="mb-2">About</h6>
+                            <p class="mb-0">@Model.Bio</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            @if (Model.ShowInvestmentStats)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Investment Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="card bg-light h-100">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted mb-2">Portfolio Value</h6>
+                                        <h3 class="mb-0">@(Model.PortfolioValue?.ToString("C0") ?? "N/A")</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="card bg-light h-100">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted mb-2">Growth</h6>
+                                        @if (Model.PortfolioGrowth.HasValue)
+                                        {
+                                            <h3 class="mb-0 @(Model.PortfolioGrowth > 0 ? "text-success" : "text-danger")">
+                                                @(Model.PortfolioGrowth > 0 ? "+" : "")@(Model.PortfolioGrowth.Value.ToString("P2"))
+                                            </h3>
+                                        }
+                                        else
+                                        {
+                                            <h3 class="mb-0">N/A</h3>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light h-100">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted mb-2">Investments</h6>
+                                        <h3 class="mb-0">@(Model.InvestmentCount?.ToString() ?? "N/A")</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.IsCurrentUser)
+            {
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-lock-fill fs-4 me-3"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="alert-heading">Your investment data is private</h5>
+                            <p class="mb-0">Other users cannot see your investment statistics. You can change this in your profile settings.</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Friends (@Model.FriendsCount)</h5>
+                    <a href="@Url.Action("Friends", "Social")" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.FriendsCount == 0)
+                    {
+                        <p class="text-muted mb-0">No friends yet.</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Connect with @Model.DisplayName to see their friends.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar {
+        width: 150px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 4rem;
+    }
+</style> 

@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Delete Account";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5">Delete Your Account</h1>
+            <p class="lead text-danger">This action is permanent and cannot be undone.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_AccountNav" />
+        </div>
+        <div class="col-md-9">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Account</h4>
+                </div>
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Warning!</h5>
+                        <p>Deleting your account is permanent and cannot be undone. All your data, including:</p>
+                        <ul>
+                            <li><strong>Personal information</strong> - Your profile details and contact information</li>
+                            <li><strong>Investment preferences</strong> - Your risk tolerance and investment goals</li>
+                            <li><strong>Portfolio allocation</strong> - Your investment portfolio details</li>
+                            <li><strong>GRPV analyses</strong> - All stock analyses and investment recommendations</li>
+                        </ul>
+                        <p class="mb-0">will be permanently deleted from our system.</p>
+                    </div>
+                    
+                    <div class="card mb-4 border-warning">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-question-circle-fill me-2 text-warning"></i>Are you sure?</h5>
+                            <p>Before you delete your account, consider:</p>
+                            <ul>
+                                <li>You can update your profile information instead</li>
+                                <li>You can change your email preferences</li>
+                                <li>You can contact our support team for assistance</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                            <label class="form-check-label" for="confirmDelete">
+                                I understand that this action is permanent and cannot be undone
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Account" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Profile
+                            </a>
+                            <button type="submit" class="btn btn-danger" id="deleteButton" disabled>
+                                <i class="bi bi-trash me-2"></i>Permanently Delete My Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('confirmDelete').addEventListener('change', function() {
+            document.getElementById('deleteButton').disabled = !this.checked;
+        });
+    </script>
+} 

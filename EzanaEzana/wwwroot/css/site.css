@@ -1,0 +1,98 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+  background-color: #f8f9fa;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Custom styles */
+.card {
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.display-4 {
+  font-weight: 600;
+}
+
+.progress {
+  border-radius: 1rem;
+  height: 0.75rem;
+}
+
+.progress-bar {
+  border-radius: 1rem;
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.text-end {
+  text-align: right !important;
+}
+
+/* Dashboard specific styles */
+.dashboard-stat {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.dashboard-stat .stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-stat .stat-label {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+/* Investment preferences styles */
+.form-range::-webkit-slider-thumb {
+  background: #0d6efd;
+}
+
+.form-range::-moz-range-thumb {
+  background: #0d6efd;
+}
+
+.form-range::-ms-thumb {
+  background: #0d6efd;
+}

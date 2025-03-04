@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "React Demo";
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-3">React Integration</h1>
+            <p class="lead">
+                This page demonstrates the integration of React with your ASP.NET Core application.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- This div will be the container for our React application -->
+            <div id="react-app">
+                <!-- React will replace this content -->
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">About React Integration</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        React is a JavaScript library for building user interfaces. It allows you to create reusable UI components
+                        that can efficiently update when your data changes.
+                    </p>
+                    <p>
+                        Benefits of using React in your Ezana application:
+                    </p>
+                    <ul>
+                        <li>Interactive UI components</li>
+                        <li>Efficient updates with virtual DOM</li>
+                        <li>Component-based architecture</li>
+                        <li>Large ecosystem of libraries</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Reference the bundled React script -->
+    <script src="~/js/dist/main.bundle.js" asp-append-version="true"></script>
+} 

@@ -1,0 +1,197 @@
+@model Ezana.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Investment Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4">Welcome, @Model.FirstName!</h1>
+            <p class="lead">Here's your investment overview and recommendations.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">Investment Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.InvestmentRecommendations.TryGetValue("message", out var messageObj) && messageObj is string message)
+                    {
+                        <p>@message</p>
+                    }
+
+                    @if (Model.InvestmentRecommendations.TryGetValue("recommendations", out var recObj) && recObj is List<Dictionary<string, object>> recommendations && recommendations.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th class="text-end">Allocation</th>
+                                        <th>Risk Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var rec in recommendations)
+                                    {
+                                        <tr>
+                                            <td>@(rec.TryGetValue("type", out var typeObj) ? typeObj.ToString() : "")</td>
+                                            <td>@(rec.TryGetValue("name", out var nameObj) ? nameObj.ToString() : "")</td>
+                                            <td class="text-end">@(rec.TryGetValue("allocation", out var alloc1) ? $"{Convert.ToDecimal(alloc1)}%" : "0%")</td>
+                                            <td>@(rec.TryGetValue("risk", out var riskObj) ? riskObj.ToString() : "")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else if (Model.InvestmentRecommendations.TryGetValue("defaultRecommendations", out var defaultRecObj) && defaultRecObj is List<Dictionary<string, object>> defaultRecs && defaultRecs.Any())
+                    {
+                        <div class="alert alert-info mb-3">
+                            You haven't set your investment preferences yet. <a asp-action="InvestmentPreferences" class="alert-link">Set your preferences</a> to get personalized recommendations.
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th class="text-end">Allocation</th>
+                                        <th>Risk Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var rec in defaultRecs)
+                                    {
+                                        <tr>
+                                            <td>@(rec.TryGetValue("type", out var typeObj) ? typeObj.ToString() : "")</td>
+                                            <td>@(rec.TryGetValue("name", out var nameObj) ? nameObj.ToString() : "")</td>
+                                            <td class="text-end">@(rec.TryGetValue("allocation", out var alloc2) ? $"{Convert.ToDecimal(alloc2)}%" : "0%")</td>
+                                            <td>@(rec.TryGetValue("risk", out var riskObj) ? riskObj.ToString() : "")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            No investment recommendations available. <a asp-action="InvestmentPreferences" class="alert-link">Set your investment preferences</a> to get personalized recommendations.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="card-title mb-0">Portfolio Allocation</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PortfolioAllocation.TryGetValue("allocation", out var portfolioAlloc) && portfolioAlloc is Dictionary<string, decimal> allocation && allocation.Any())
+                    {
+                        <div class="mb-3">
+                            @foreach (var item in allocation)
+                            {
+                                if (item.Value > 0)
+                                {
+                                    var color = item.Key switch
+                                    {
+                                        "Stocks" => "bg-primary",
+                                        "Bonds" => "bg-success",
+                                        "Cash" => "bg-info",
+                                        "Alternative" => "bg-warning",
+                                        _ => "bg-secondary"
+                                    };
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>@item.Key</span>
+                                            <span>@item.Value.ToString("0.##")%</span>
+                                        </div>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar @color" role="progressbar" style="width: @(item.Value.ToString("0.##"))%;" aria-valuenow="@item.Value" aria-valuemin="0" aria-valuemax="100">@item.Value.ToString("0.##")%</div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div class="mt-4">
+                            @if (Model.PortfolioAllocation.TryGetValue("riskTolerance", out var riskObj) && riskObj is int risk)
+                            {
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Risk Tolerance</span>
+                                        <span>@risk/10</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: @((risk * 10).ToString())%;" aria-valuenow="@risk" aria-valuemin="0" aria-valuemax="10"></div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.PortfolioAllocation.TryGetValue("investmentHorizon", out var horizonObj) && horizonObj is string horizon)
+                            {
+                                <div class="mb-2">
+                                    <strong>Investment Horizon:</strong> @horizon
+                                </div>
+                            }
+
+                            @if (Model.PortfolioAllocation.TryGetValue("investmentGoals", out var goalsObj) && goalsObj is string goals)
+                            {
+                                <div>
+                                    <strong>Investment Goals:</strong> @goals
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            No portfolio allocation data available. <a asp-action="InvestmentPreferences" class="alert-link">Set your investment preferences</a> to see your portfolio allocation.
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a asp-action="InvestmentPreferences" class="btn btn-primary">Update Investment Preferences</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a asp-action="InvestmentPreferences" class="btn btn-lg btn-outline-success">
+                            <i class="bi bi-gear"></i> Update Investment Preferences
+                        </a>
+                        <a asp-controller="Investments" asp-action="Index" class="btn btn-lg btn-outline-primary">
+                            <i class="bi bi-graph-up"></i> View My Investments
+                        </a>
+                        <a asp-controller="Investments" asp-action="MarketOverview" class="btn btn-lg btn-outline-secondary">
+                            <i class="bi bi-bar-chart"></i> Market Overview
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Add any client-side JavaScript for charts or interactivity here
+    </script>
+} 
