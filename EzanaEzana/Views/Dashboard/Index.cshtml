@@ -11,7 +11,11 @@
         </div>
     </div>
 
-    <div class="row mb-4">
+    <!-- React Dashboard Component -->
+    <div id="react-dashboard-root"></div>
+
+    <!-- Original Dashboard Content (can be hidden or removed later) -->
+    <div class="row mb-4" style="display: none;">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-dark text-white">
@@ -90,7 +94,7 @@
         </div>
     </div>
 
-    <div class="row mb-4">
+    <div class="row mb-4" style="display: none;">
         <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-secondary text-white">
@@ -190,8 +194,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Add any client-side JavaScript for charts or interactivity here
-    </script>
+    <!-- React Dashboard Bundle -->
+    <script src="~/js/dist/dashboard.bundle.js"></script>
 } 

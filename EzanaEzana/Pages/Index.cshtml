@@ -1,10 +1,184 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Ezana - Task Management Solution";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="landing-container">
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="logo-container">
+            <img src="/images/gazelle-running-silhouette.png" alt="Ezana Logo" class="logo-image" />
+            <span class="logo-text">EZANA</span>
+        </div>
+        <div class="nav-links">
+            <a href="/Identity/Account/Login" class="login-link">Login</a>
+            <a href="/Identity/Account/Register" class="get-started-button">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="hero-section">
+            <div class="hero-text">
+                <h1>Streamline Your Tasks with Ezana</h1>
+                <p>Boost productivity and achieve your goals with our intuitive task management solution</p>
+            </div>
+            <div class="hero-image">
+                <img src="/images/hero-illustration.png" alt="Task Management" />
+            </div>
+        </div>
+    </main>
 </div>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+        background-color: #ffffff;
+    }
+
+    .landing-container {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    /* Navigation Bar Styles */
+    .nav-bar {
+        width: 100%;
+        height: 148px;
+        background-color: rgba(46, 53, 50, 0.95);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 24px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+
+    .logo-image {
+        width: 81px;
+        height: 81px;
+        object-fit: contain;
+    }
+
+    .logo-text {
+        color: #43B929;
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: -10px;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .login-link {
+        color: #43B929;
+        text-decoration: none;
+        font-size: 22px;
+        font-weight: 500;
+    }
+
+    .get-started-button {
+        background-color: #43B929;
+        color: #2E3532;
+        text-decoration: none;
+        padding: 10px 30px;
+        border-radius: 10px;
+        font-size: 22px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .get-started-button:hover {
+        background-color: #3aa323;
+        color: #2E3532;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+        padding: 40px 24px;
+    }
+
+    .hero-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        gap: 40px;
+    }
+
+    .hero-text {
+        flex: 1;
+    }
+
+    .hero-text h1 {
+        font-size: 48px;
+        color: #2E3532;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .hero-text p {
+        font-size: 24px;
+        color: #2E3532;
+        opacity: 0.8;
+        line-height: 1.5;
+    }
+
+    .hero-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hero-image img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .nav-bar {
+            height: auto;
+            padding: 20px;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .get-started-button {
+            width: 100%;
+            text-align: center;
+        }
+
+        .hero-section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .hero-text h1 {
+            font-size: 36px;
+        }
+
+        .hero-text p {
+            font-size: 20px;
+        }
+    }
+</style>

@@ -4,20 +4,20 @@ import { Toaster } from 'react-hot-toast';
 import Dashboard from './components/Dashboard';
 import './index.css';
 
-// Initialize the app
-const initApp = () => {
-  const container = document.getElementById('react-root');
+// Initialize the Home component
+const initHome = () => {
+  const container = document.getElementById('react-home-root');
   
   if (!container) {
-    console.error('React root element not found');
+    console.error('Home root element not found');
     return;
   }
 
   const root = createRoot(container);
-  
+
   root.render(
     <React.StrictMode>
-      <div className="app">
+      <div className="home-app">
         <Dashboard />
         <Toaster
           position="top-right"
@@ -50,7 +50,7 @@ const initApp = () => {
 
 // Wait for DOM to be ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', initHome);
 } else {
-  initApp();
-} 
+  initHome();
+}

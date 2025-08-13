@@ -51,6 +51,18 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Configure domain
+app.Use(async (context, next) =>
+{
+    var host = context.Request.Host.Value;
+    if (!host.Contains("ezana.world") && !host.Contains("localhost"))
+    {
+        context.Response.Redirect("https://ezana.world" + context.Request.Path + context.Request.QueryString);
+        return;
+    }
+    await next();
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

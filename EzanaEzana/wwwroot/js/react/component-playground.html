@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Component Playground</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .playground {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .component-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .component-title {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .test-controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .test-controls button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .test-controls button:hover {
+            background: #0056b3;
+        }
+        .error-boundary {
+            border: 2px solid #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .debug-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="playground">
+        <h1>React Component Playground</h1>
+        <p>Test your React components in isolation without the full application.</p>
+        
+        <div class="debug-info">
+            <strong>Debug Info:</strong><br>
+            React Version: <span id="react-version">Loading...</span><br>
+            React DOM Version: <span id="react-dom-version">Loading...</span><br>
+            Babel Status: <span id="babel-status">Loading...</span><br>
+            Finnhub API: <span id="finnhub-status">Configured ✅</span><br>
+            Quiver API: <span id="quiver-status">Configured ✅</span><br>
+            <button onclick="checkVersions()">Check Versions</button>
+        </div>
+        
+        <div class="component-section">
+            <h2 class="component-title">Dashboard Component Test</h2>
+            <div class="test-controls">
+                <button onclick="testDashboard()">Test Dashboard</button>
+                <button onclick="testWithMockData()">Test with Mock Data</button>
+                <button onclick="testErrorState()">Test Error State</button>
+                <button onclick="clearDashboard()">Clear</button>
+            </div>
+            <div id="dashboard-test-container"></div>
+        </div>
+
+        <div class="component-section">
+            <h2 class="component-title">Dashboard Card Component Test</h2>
+            <div class="test-controls">
+                <button onclick="testDashboardCard()">Test Card</button>
+                <button onclick="testCardVariations()">Test Variations</button>
+                <button onclick="clearCard()">Clear</button>
+            </div>
+            <div id="card-test-container"></div>
+        </div>
+
+        <div class="component-section">
+            <h2 class="component-title">Investment Chart Component Test</h2>
+            <div class="test-controls">
+                <button onclick="testChart()">Test Chart</button>
+                <button onclick="testChartTimeframes()">Test Timeframes</button>
+                <button onclick="clearChart()">Clear</button>
+            </div>
+            <div id="chart-test-container"></div>
+        </div>
+
+        <div class="component-section">
+            <h2 class="component-title">Market API Service Test</h2>
+            <div class="test-controls">
+                <button onclick="testStockQuotes()">Test Stock Quotes</button>
+                <button onclick="testMarketNews()">Test Market News</button>
+                <button onclick="testCryptoData()">Test Crypto Data</button>
+                <button onclick="testStockSearch()">Test Stock Search</button>
+                <button onclick="clearMarketData()">Clear</button>
+            </div>
+            <div id="market-api-test-container"></div>
+        </div>
+
+        <div class="component-section">
+            <h2 class="component-title">Congressional Trading Dashboard Test</h2>
+            <div class="test-controls">
+                <button onclick="testCongressionalTrading()">Test Dashboard</button>
+                <button onclick="testCongressPeople()">Test Congress People</button>
+                <button onclick="testRecentTrades()">Test Recent Trades</button>
+                <button onclick="testTradingAnalytics()">Test Analytics</button>
+                <button onclick="clearCongressionalData()">Clear</button>
+            </div>
+            <div id="congressional-trading-test-container"></div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        // Check if React is loaded
+        function checkVersions() {
+            try {
+                const reactVersion = React.version || 'Not loaded';
+                const reactDomVersion = ReactDOM.version || 'Not loaded';
+                const babelStatus = typeof Babel !== 'undefined' ? 'Loaded' : 'Not loaded';
+                
+                document.getElementById('react-version').textContent = reactVersion;
+                document.getElementById('react-dom-version').textContent = reactDomVersion;
+                document.getElementById('babel-status').textContent = babelStatus;
+                
+                console.log('React Version:', reactVersion);
+                console.log('React DOM Version:', reactDomVersion);
+                console.log('Babel Status:', babelStatus);
+            } catch (error) {
+                console.error('Error checking versions:', error);
+                document.getElementById('react-version').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Auto-check versions when page loads
+        window.addEventListener('load', checkVersions);
+
+        // Mock store for testing
+        const mockStore = {
+            user: { name: 'Test User', email: 'test@example.com' },
+            investments: [
+                { id: '1', name: 'Apple Inc', symbol: 'AAPL', value: 150.25, change: 5.50, changePercent: 3.8 },
+                { id: '2', name: 'Microsoft Corp', symbol: 'MSFT', value: 300.75, change: -10.25, changePercent: -3.3 },
+                { id: '3', name: 'Google LLC', symbol: 'GOOGL', value: 2750.00, change: 125.00, changePercent: 4.8 }
+            ],
+            portfolios: [
+                { id: '1', name: 'Growth Portfolio', value: 25000, change: 1250, changePercent: 5.3 },
+                { id: '2', name: 'Conservative Portfolio', value: 15000, change: 300, changePercent: 2.0 }
+            ],
+            loading: false,
+            error: null,
+            setInvestments: () => {},
+            setPortfolios: () => {},
+            setLoading: () => {},
+            setError: () => {},
+            getTotalPortfolioValue: () => 40000,
+            getTotalPortfolioChange: () => 1550
+        };
+
+        // Simple Dashboard Card Component
+        const DashboardCard = ({ title, value, change, changePercent, icon, trend }) => {
+            const isPositive = change >= 0;
+            const trendColor = isPositive ? '#10b981' : '#ef4444';
+            const trendIcon = isPositive ? '↗️' : '↘️';
+            
+            return (
+                <div style={{
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    backgroundColor: 'white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    margin: '10px'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                        <span style={{ fontSize: '24px', marginRight: '10px' }}>{icon}</span>
+                        <h3 style={{ margin: 0, color: '#333' }}>{title}</h3>
+                    </div>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '10px' }}>
+                        ${value.toLocaleString()}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ fontSize: '18px', marginRight: '5px' }}>{trendIcon}</span>
+                        <span style={{ fontWeight: '500', color: trendColor }}>
+                            ${change.toLocaleString()} ({changePercent}%)
+                        </span>
+                    </div>
+                </div>
+            );
+        };
+
+        // Simple Investment Chart Component
+        const InvestmentChart = ({ timeframe }) => {
+            const mockData = [
+                { date: 'Jan', value: 10000 },
+                { date: 'Feb', value: 10500 },
+                { date: 'Mar', value: 11000 },
+                { date: 'Apr', value: 10800 },
+                { date: 'May', value: 11500 },
+                { date: 'Jun', value: 12000 }
+            ];
+
+            return (
+                <div style={{
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    backgroundColor: 'white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                    <h3 style={{ margin: '0 0 20px 0', color: '#333' }}>
+                        Portfolio Performance ({timeframe})
+                    </h3>
+                    <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '20px' }}>
+                        {mockData.map((point, index) => (
+                            <div key={index} style={{
+                                width: '30px',
+                                height: `${(point.value / 12000) * 150}px`,
+                                backgroundColor: '#007bff',
+                                borderRadius: '4px 4px 0 0',
+                                display: 'flex',
+                                alignItems: 'end',
+                                justifyContent: 'center',
+                                color: 'white',
+                                fontSize: '12px',
+                                paddingBottom: '5px'
+                            }}>
+                                ${(point.value / 1000).toFixed(0)}k
+                            </div>
+                        ))}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '12px', color: '#666' }}>
+                        {mockData.map((point, index) => (
+                            <span key={index}>{point.date}</span>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Test Functions
+        function testDashboard() {
+            try {
+                console.log('Testing Dashboard...');
+                const container = document.getElementById('dashboard-test-container');
+                if (!container) {
+                    console.error('Container not found');
+                    return;
+                }
+                
+                const root = ReactDOM.createRoot(container);
+                
+                root.render(
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                        <DashboardCard 
+                            title="Total Portfolio Value"
+                            value={mockStore.getTotalPortfolioValue()}
+                            change={mockStore.getTotalPortfolioChange()}
+                            changePercent={3.9}
+                            icon="💰"
+                            trend="up"
+                        />
+                        <DashboardCard 
+                            title="Total Return"
+                            value={1550}
+                            change={1550}
+                            changePercent={4.0}
+                            icon="📈"
+                            trend="up"
+                        />
+                        <DashboardCard 
+                            title="Risk Level"
+                            value={7}
+                            change={-1}
+                            changePercent={-12.5}
+                            icon="⚠️"
+                            trend="down"
+                        />
+                    </div>
+                );
+                console.log('Dashboard rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering dashboard:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function testDashboardCard() {
+            try {
+                console.log('Testing Dashboard Card...');
+                const container = document.getElementById('card-test-container');
+                const root = ReactDOM.createRoot(container);
+                
+                root.render(
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                        <DashboardCard 
+                            title="Stocks"
+                            value={25000}
+                            change={1250}
+                            changePercent={5.3}
+                            icon="📊"
+                            trend="up"
+                        />
+                        <DashboardCard 
+                            title="Bonds"
+                            value={10000}
+                            change={200}
+                            changePercent={2.0}
+                            icon="🏦"
+                            trend="up"
+                        />
+                        <DashboardCard 
+                            title="Cash"
+                            value={5000}
+                            change={100}
+                            changePercent={2.0}
+                            icon="💵"
+                            trend="up"
+                        />
+                    </div>
+                );
+                console.log('Dashboard Card rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering dashboard card:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function testChart() {
+            try {
+                console.log('Testing Chart...');
+                const container = document.getElementById('chart-test-container');
+                const root = ReactDOM.createRoot(container);
+                
+                root.render(<InvestmentChart timeframe="6M" />);
+                console.log('Chart rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering chart:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function testChartTimeframes() {
+            try {
+                console.log('Testing Chart Timeframes...');
+                const container = document.getElementById('chart-test-container');
+                const root = ReactDOM.createRoot(container);
+                
+                root.render(
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                        <InvestmentChart timeframe="1M" />
+                        <InvestmentChart timeframe="3M" />
+                        <InvestmentChart timeframe="6M" />
+                    </div>
+                );
+                console.log('Chart Timeframes rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering chart timeframes:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function testWithMockData() {
+            try {
+                console.log('Testing with Mock Data...');
+                const container = document.getElementById('dashboard-test-container');
+                const root = ReactDOM.createRoot(container);
+                
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Mock Data Test</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                            {mockStore.investments.map(inv => (
+                                <DashboardCard 
+                                    key={inv.id}
+                                    title={inv.name}
+                                    value={inv.value}
+                                    change={inv.change}
+                                    changePercent={inv.changePercent}
+                                    icon="📈"
+                                    trend={inv.change >= 0 ? "up" : "down"}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                );
+                console.log('Mock Data rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering mock data:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function testErrorState() {
+            try {
+                console.log('Testing Error State...');
+                const container = document.getElementById('dashboard-test-container');
+                const root = ReactDOM.createRoot(container);
+                
+                root.render(
+                    <div style={{
+                        border: '2px solid #dc3545',
+                        backgroundColor: '#f8d7da',
+                        color: '#721c24',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        textAlign: 'center'
+                    }}>
+                        <h3>⚠️ Error State Test</h3>
+                        <p>This simulates what happens when there's an error loading data.</p>
+                        <button 
+                            onClick={() => testDashboard()}
+                            style={{
+                                background: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 20px',
+                                borderRadius: '5px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Retry
+                        </button>
+                    </div>
+                );
+                console.log('Error State rendered successfully!');
+            } catch (error) {
+                console.error('Error rendering error state:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function clearDashboard() {
+            const container = document.getElementById('dashboard-test-container');
+            container.innerHTML = '';
+        }
+
+        function clearCard() {
+            const container = document.getElementById('card-test-container');
+            container.innerHTML = '';
+        }
+
+        function clearChart() {
+            const container = document.getElementById('chart-test-container');
+            container.innerHTML = '';
+        }
+
+        // Market API Test Functions
+        async function testStockQuotes() {
+            try {
+                const container = document.getElementById('market-api-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading stock quotes...</div>';
+                
+                // Simulate the market API service
+                const popularStocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'];
+                const stockData = [];
+                
+                for (const symbol of popularStocks) {
+                    // Simulate API delay
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    
+                    const basePrice = 50 + Math.random() * 200;
+                    const price = basePrice + (Math.random() - 0.5) * 10;
+                    const change = (Math.random() - 0.5) * 20;
+                    const changePercent = (change / (price - change)) * 100;
+                    
+                    stockData.push({
+                        symbol,
+                        name: getCompanyName(symbol),
+                        price: Math.round(price * 100) / 100,
+                        change: Math.round(change * 100) / 100,
+                        changePercent: Math.round(changePercent * 100) / 100,
+                        volume: Math.floor(Math.random() * 10000000) + 1000000
+                    });
+                }
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Live Stock Quotes</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px' }}>
+                            {stockData.map(stock => (
+                                <div key={stock.symbol} style={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    padding: '15px',
+                                    backgroundColor: 'white',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <h4 style={{ margin: 0, color: '#333' }}>{stock.symbol}</h4>
+                                        <span style={{ fontSize: '12px', color: '#666' }}>{stock.name}</span>
+                                    </div>
+                                    <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
+                                        ${stock.price}
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ 
+                                            color: stock.change >= 0 ? '#10b981' : '#ef4444',
+                                            fontWeight: '500'
+                                        }}>
+                                            {stock.change >= 0 ? '+' : ''}{stock.change} ({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent}%)
+                                        </span>
+                                        <span style={{ fontSize: '12px', color: '#666' }}>
+                                            Vol: {stock.volume.toLocaleString()}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing stock quotes:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testMarketNews() {
+            try {
+                const container = document.getElementById('market-api-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading market news...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const newsData = [
+                    {
+                        title: "Tech Stocks Rally on Strong Earnings Reports",
+                        summary: "Major technology companies exceeded quarterly expectations, driving market gains.",
+                        source: "Reuters",
+                        sentiment: "positive",
+                        publishedAt: new Date().toISOString()
+                    },
+                    {
+                        title: "Federal Reserve Signals Potential Rate Changes",
+                        summary: "Central bank officials hint at possible monetary policy adjustments.",
+                        source: "Bloomberg",
+                        sentiment: "neutral",
+                        publishedAt: new Date(Date.now() - 3600000).toISOString()
+                    },
+                    {
+                        title: "Crypto Market Shows Signs of Recovery",
+                        summary: "Digital assets gain momentum after recent market correction.",
+                        source: "CNBC",
+                        sentiment: "positive",
+                        publishedAt: new Date(Date.now() - 7200000).toISOString()
+                    }
+                ];
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Market News</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            {newsData.map((news, index) => (
+                                <div key={index} style={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    padding: '15px',
+                                    backgroundColor: 'white',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <h4 style={{ margin: 0, color: '#333', fontSize: '16px' }}>{news.title}</h4>
+                                        <span style={{ 
+                                            fontSize: '12px', 
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            backgroundColor: news.sentiment === 'positive' ? '#d1fae5' : 
+                                                           news.sentiment === 'negative' ? '#fee2e2' : '#f3f4f6',
+                                            color: news.sentiment === 'positive' ? '#065f46' : 
+                                                   news.sentiment === 'negative' ? '#991b1b' : '#374151'
+                                        }}>
+                                            {news.sentiment}
+                                        </span>
+                                    </div>
+                                    <p style={{ margin: '0 0 10px 0', color: '#666', fontSize: '14px' }}>{news.summary}</p>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: '#999' }}>
+                                        <span>Source: {news.source}</span>
+                                        <span>{new Date(news.publishedAt).toLocaleTimeString()}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing market news:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testCryptoData() {
+            try {
+                const container = document.getElementById('market-api-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading crypto data...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                const cryptoData = [
+                    { symbol: 'BTC', name: 'Bitcoin', price: 45000 + Math.random() * 10000 },
+                    { symbol: 'ETH', name: 'Ethereum', price: 3000 + Math.random() * 1000 },
+                    { symbol: 'SOL', name: 'Solana', price: 100 + Math.random() * 50 },
+                    { symbol: 'ADA', name: 'Cardano', price: 1 + Math.random() * 0.5 }
+                ].map(crypto => ({
+                    ...crypto,
+                    price: Math.round(crypto.price * 100) / 100,
+                    change24h: (Math.random() - 0.5) * 2000,
+                    changePercent24h: (Math.random() - 0.5) * 20,
+                    marketCap: Math.floor(Math.random() * 1000000000000) + 1000000000,
+                    volume24h: Math.floor(Math.random() * 1000000000) + 10000000
+                }));
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Cryptocurrency Data</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                            {cryptoData.map(crypto => (
+                                <div key={crypto.symbol} style={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    padding: '15px',
+                                    backgroundColor: 'white',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <h4 style={{ margin: 0, color: '#333' }}>{crypto.symbol}</h4>
+                                        <span style={{ fontSize: '12px', color: '#666' }}>{crypto.name}</span>
+                                    </div>
+                                    <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '10px' }}>
+                                        ${crypto.price.toLocaleString()}
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                        <span style={{ 
+                                            color: crypto.change24h >= 0 ? '#10b981' : '#ef4444',
+                                            fontWeight: '500',
+                                            fontSize: '14px'
+                                        }}>
+                                            {crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)} ({crypto.changePercent24h >= 0 ? '+' : ''}{crypto.changePercent24h.toFixed(2)}%)
+                                        </span>
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: '#666' }}>
+                                        <div>Market Cap: ${(crypto.marketCap / 1000000000).toFixed(2)}B</div>
+                                        <div>24h Vol: ${(crypto.volume24h / 1000000).toFixed(2)}M</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing crypto data:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testStockSearch() {
+            try {
+                const container = document.getElementById('market-api-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Testing stock search...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 400));
+                
+                const searchQuery = 'AAPL';
+                const searchResults = [
+                    { symbol: 'AAPL', name: 'Apple Inc.' },
+                    { symbol: 'AAPL.L', name: 'Apple Inc. London' },
+                    { symbol: 'AAPL.MX', name: 'Apple Inc. Mexico' }
+                ];
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Stock Search Results</h3>
+                        <div style={{ marginBottom: '15px' }}>
+                            <strong>Search Query:</strong> "{searchQuery}"
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {searchResults.map((result, index) => (
+                                <div key={index} style={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '6px',
+                                    padding: '12px',
+                                    backgroundColor: 'white',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center'
+                                }}>
+                                    <div>
+                                        <strong style={{ color: '#333' }}>{result.symbol}</strong>
+                                        <div style={{ fontSize: '14px', color: '#666' }}>{result.name}</div>
+                                    </div>
+                                    <button style={{
+                                        background: '#007bff',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '6px 12px',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px'
+                                    }}>
+                                        View Details
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing stock search:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function clearMarketData() {
+            const container = document.getElementById('market-api-test-container');
+            container.innerHTML = '';
+        }
+
+        // Helper function for company names
+        function getCompanyName(symbol) {
+            const names = {
+                'AAPL': 'Apple Inc.',
+                'MSFT': 'Microsoft Corporation',
+                'GOOGL': 'Alphabet Inc.',
+                'AMZN': 'Amazon.com Inc.',
+                'TSLA': 'Tesla Inc.',
+                'META': 'Meta Platforms Inc.',
+                'NVDA': 'NVIDIA Corporation',
+                'JPM': 'JPMorgan Chase & Co.',
+                'JNJ': 'Johnson & Johnson',
+                'V': 'Visa Inc.'
+            };
+            return names[symbol] || `${symbol} Corporation`;
+        }
+
+        // Congressional Trading Test Functions
+        async function testCongressionalTrading() {
+            try {
+                const container = document.getElementById('congressional-trading-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading congressional trading dashboard...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        <div style={{ 
+                            backgroundColor: 'white', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            border: '1px solid #e5e7eb'
+                        }}>
+                            {/* Header */}
+                            <div style={{ padding: '24px', borderBottom: '1px solid #e5e7eb' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div>
+                                        <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>Congressional Trading Dashboard</h2>
+                                        <p style={{ color: '#6b7280', margin: '4px 0 0 0' }}>Track investments made by members of Congress</p>
+                                    </div>
+                                    <span style={{ 
+                                        display: 'inline-flex', 
+                                        alignItems: 'center', 
+                                        padding: '4px 10px', 
+                                        borderRadius: '9999px', 
+                                        fontSize: '12px', 
+                                        fontWeight: '500', 
+                                        backgroundColor: '#dcfce7', 
+                                        color: '#166534' 
+                                    }}>
+                                        Live Data
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Stats Cards */}
+                            <div style={{ padding: '24px', borderBottom: '1px solid #e5e7eb' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
+                                    <div style={{ backgroundColor: '#eff6ff', padding: '24px', borderRadius: '8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ 
+                                                width: '32px', 
+                                                height: '32px', 
+                                                backgroundColor: '#3b82f6', 
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontSize: '16px'
+                                            }}>
+                                                👥
+                                            </div>
+                                            <div style={{ marginLeft: '16px' }}>
+                                                <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e40af', margin: 0 }}>Total Congresspeople</p>
+                                                <p style={{ fontSize: '24px', fontWeight: '600', color: '#1e3a8a', margin: 0 }}>535</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ backgroundColor: '#f0fdf4', padding: '24px', borderRadius: '8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ 
+                                                width: '32px', 
+                                                height: '32px', 
+                                                backgroundColor: '#16a34a', 
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontSize: '16px'
+                                            }}>
+                                                📊
+                                            </div>
+                                            <div style={{ marginLeft: '16px' }}>
+                                                <p style={{ fontSize: '14px', fontWeight: '500', color: '#15803d', margin: 0 }}>Total Trades</p>
+                                                <p style={{ fontSize: '24px', fontWeight: '600', color: '#166534', margin: 0 }}>1,250</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ backgroundColor: '#faf5ff', padding: '24px', borderRadius: '8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ 
+                                                width: '32px', 
+                                                height: '32px', 
+                                                backgroundColor: '#9333ea', 
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontSize: '16px'
+                                            }}>
+                                                💰
+                                            </div>
+                                            <div style={{ marginLeft: '16px' }}>
+                                                <p style={{ fontSize: '14px', fontWeight: '500', color: '#7c3aed', margin: 0 }}>Total Volume</p>
+                                                <p style={{ fontSize: '24px', fontWeight: '600', color: '#6b21a8', margin: 0 }}>$45.0M</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ backgroundColor: '#fff7ed', padding: '24px', borderRadius: '8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ 
+                                                width: '32px', 
+                                                height: '32px', 
+                                                backgroundColor: '#ea580c', 
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                fontSize: '16px'
+                                            }}>
+                                                📈
+                                            </div>
+                                            <div style={{ marginLeft: '16px' }}>
+                                                <p style={{ fontSize: '14px', fontWeight: '500', color: '#c2410c', margin: 0 }}>Recent Activity</p>
+                                                <p style={{ fontSize: '24px', fontWeight: '600', color: '#9a3412', margin: 0 }}>20</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Congresspeople Grid */}
+                            <div style={{ padding: '24px' }}>
+                                <h3 style={{ fontSize: '18px', fontWeight: '500', color: '#111827', margin: '0 0 16px 0' }}>Featured Congresspeople</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                                    {[
+                                        { name: 'Nancy Pelosi', party: 'D', state: 'CA', chamber: 'House', trades: 45, lastTrade: '2024-01-15' },
+                                        { name: 'Mitch McConnell', party: 'R', state: 'KY', chamber: 'Senate', trades: 32, lastTrade: '2024-01-10' },
+                                        { name: 'Chuck Schumer', party: 'D', state: 'NY', chamber: 'Senate', trades: 28, lastTrade: '2024-01-12' }
+                                    ].map((person, index) => (
+                                        <div key={index} style={{ 
+                                            border: '1px solid #e5e7eb', 
+                                            borderRadius: '8px', 
+                                            padding: '16px',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }} onMouseEnter={(e) => {
+                                            e.target.style.backgroundColor = '#f9fafb';
+                                            e.target.style.borderColor = '#3b82f6';
+                                        }} onMouseLeave={(e) => {
+                                            e.target.style.backgroundColor = 'white';
+                                            e.target.style.borderColor = '#e5e7eb';
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between' }}>
+                                                <div style={{ flex: 1 }}>
+                                                    <h4 style={{ fontSize: '14px', fontWeight: '500', color: '#111827', margin: 0 }}>{person.name}</h4>
+                                                    <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>{person.state} • {person.chamber}</p>
+                                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                                                        <span style={{ 
+                                                            display: 'inline-flex', 
+                                                            alignItems: 'center', 
+                                                            padding: '4px 8px', 
+                                                            borderRadius: '9999px', 
+                                                            fontSize: '12px', 
+                                                            fontWeight: '500', 
+                                                            color: 'white',
+                                                            backgroundColor: person.party === 'D' ? '#3b82f6' : person.party === 'R' ? '#ef4444' : '#8b5cf6'
+                                                        }}>
+                                                            {person.party === 'D' ? 'Democrat' : person.party === 'R' ? 'Republican' : 'Independent'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div style={{ textAlign: 'right' }}>
+                                                    <p style={{ fontSize: '12px', color: '#6b7280', margin: 0 }}>Trades</p>
+                                                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#111827', margin: 0 }}>{person.trades}</p>
+                                                    <p style={{ fontSize: '12px', color: '#9ca3af', margin: '4px 0 0 0' }}>
+                                                        Last: {new Date(person.lastTrade).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing congressional trading:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testCongressPeople() {
+            try {
+                const container = document.getElementById('congressional-trading-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading congresspeople...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const congressPeople = [
+                    { name: 'Nancy Pelosi', party: 'D', state: 'CA', chamber: 'House', trades: 45, committees: ['Appropriations', 'Intelligence'] },
+                    { name: 'Mitch McConnell', party: 'R', state: 'KY', chamber: 'Senate', trades: 32, committees: ['Appropriations', 'Rules'] },
+                    { name: 'Chuck Schumer', party: 'D', state: 'NY', chamber: 'Senate', trades: 28, committees: ['Finance', 'Judiciary'] },
+                    { name: 'Kevin McCarthy', party: 'R', state: 'CA', chamber: 'House', trades: 19, committees: ['Financial Services'] },
+                    { name: 'Alexandria Ocasio-Cortez', party: 'D', state: 'NY', chamber: 'House', trades: 12, committees: ['Oversight', 'Financial Services'] }
+                ];
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Congresspeople Directory</h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                            {congressPeople.map((person, index) => (
+                                <div key={index} style={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    padding: '16px',
+                                    backgroundColor: 'white',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                        <div>
+                                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#333', margin: '0 0 4px 0' }}>{person.name}</h4>
+                                            <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>{person.state} • {person.chamber}</p>
+                                        </div>
+                                        <span style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            padding: '4px 8px',
+                                            borderRadius: '9999px',
+                                            fontSize: '12px',
+                                            fontWeight: '500',
+                                            color: 'white',
+                                            backgroundColor: person.party === 'D' ? '#3b82f6' : person.party === 'R' ? '#ef4444' : '#8b5cf6'
+                                        }}>
+                                            {person.party === 'D' ? 'Democrat' : person.party === 'R' ? 'Republican' : 'Independent'}
+                                        </span>
+                                    </div>
+                                    
+                                    <div style={{ marginBottom: '12px' }}>
+                                        <p style={{ fontSize: '12px', color: '#666', margin: '0 0 4px 0' }}>Committees:</p>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                            {person.committees.map((committee, idx) => (
+                                                <span key={idx} style={{
+                                                    display: 'inline-block',
+                                                    padding: '2px 6px',
+                                                    backgroundColor: '#f3f4f6',
+                                                    borderRadius: '4px',
+                                                    fontSize: '11px',
+                                                    color: '#374151'
+                                                }}>
+                                                    {committee}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '14px', color: '#666' }}>
+                                            Total Trades: <strong style={{ color: '#333' }}>{person.trades}</strong>
+                                        </span>
+                                        <button style={{
+                                            background: '#007bff',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 12px',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '12px'
+                                        }}>
+                                            Track
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing congress people:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testRecentTrades() {
+            try {
+                const container = document.getElementById('congressional-trading-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading recent trades...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 600));
+                
+                const recentTrades = [
+                    { congressperson: 'Nancy Pelosi', ticker: 'AAPL', company: 'Apple Inc.', type: 'buy', amount: 250000, date: '2024-01-15' },
+                    { congressperson: 'Mitch McConnell', ticker: 'MSFT', company: 'Microsoft Corp.', type: 'sell', amount: 150000, date: '2024-01-14' },
+                    { congressperson: 'Chuck Schumer', ticker: 'GOOGL', company: 'Alphabet Inc.', type: 'buy', amount: 300000, date: '2024-01-13' },
+                    { congressperson: 'Kevin McCarthy', ticker: 'TSLA', company: 'Tesla Inc.', type: 'buy', amount: 100000, date: '2024-01-12' },
+                    { congressperson: 'Alexandria Ocasio-Cortez', ticker: 'META', company: 'Meta Platforms Inc.', type: 'sell', amount: 75000, date: '2024-01-11' }
+                ];
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Recent Congressional Trades</h3>
+                        <div style={{ overflow: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ backgroundColor: '#f9fafb' }}>
+                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>Congressperson</th>
+                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>Company</th>
+                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>Trade</th>
+                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>Amount</th>
+                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontSize: '12px', fontWeight: '500', color: '#6b7280' }}>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recentTrades.map((trade, index) => (
+                                        <tr key={index} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                                            <td style={{ padding: '12px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    <div style={{ 
+                                                        width: '32px', 
+                                                        height: '32px', 
+                                                        backgroundColor: '#e5e7eb', 
+                                                        borderRadius: '50%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        marginRight: '12px'
+                                                    }}>
+                                                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#6b7280' }}>
+                                                            {trade.congressperson.charAt(0)}
+                                                        </span>
+                                                    </div>
+                                                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>{trade.congressperson}</span>
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '12px' }}>
+                                                <div>
+                                                    <div style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>{trade.ticker}</div>
+                                                    <div style={{ fontSize: '12px', color: '#6b7280' }}>{trade.company}</div>
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '12px' }}>
+                                                <span style={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    padding: '4px 8px',
+                                                    borderRadius: '9999px',
+                                                    fontSize: '11px',
+                                                    fontWeight: '500',
+                                                    backgroundColor: trade.type === 'buy' ? '#dcfce7' : '#fee2e2',
+                                                    color: trade.type === 'buy' ? '#166534' : '#991b1b'
+                                                }}>
+                                                    {trade.type.toUpperCase()}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: '12px', fontSize: '14px', fontWeight: '500', color: '#111827' }}>
+                                                ${(trade.amount / 1000).toFixed(0)}K
+                                            </td>
+                                            <td style={{ padding: '12px', fontSize: '14px', color: '#6b7280' }}>
+                                                {new Date(trade.date).toLocaleDateString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing recent trades:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function testTradingAnalytics() {
+            try {
+                const container = document.getElementById('congressional-trading-test-container');
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">Loading trading analytics...</div>';
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 400));
+                
+                const analytics = {
+                    mostTradedStocks: [
+                        { ticker: 'AAPL', count: 45, volume: 2500000 },
+                        { ticker: 'MSFT', count: 38, volume: 2100000 },
+                        { ticker: 'GOOGL', count: 32, volume: 1800000 },
+                        { ticker: 'TSLA', count: 28, volume: 1500000 },
+                        { ticker: 'META', count: 25, volume: 1200000 }
+                    ],
+                    partyBreakdown: [
+                        { party: 'D', count: 650, volume: 23000000 },
+                        { party: 'R', count: 550, volume: 20000000 },
+                        { party: 'I', count: 50, volume: 2000000 }
+                    ],
+                    monthlyTrends: [
+                        { month: 'Jan 2024', count: 120, volume: 4500000 },
+                        { month: 'Dec 2023', count: 95, volume: 3800000 },
+                        { month: 'Nov 2023', count: 110, volume: 4200000 }
+                    ]
+                };
+                
+                const root = ReactDOM.createRoot(container);
+                root.render(
+                    <div>
+                        <h3 style={{ marginBottom: '20px', color: '#333' }}>Trading Analytics & Insights</h3>
+                        
+                        {/* Most Traded Stocks */}
+                        <div style={{ marginBottom: '24px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '500', color: '#333', margin: '0 0 12px 0' }}>Most Traded Stocks</h4>
+                            <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '16px' }}>
+                                {analytics.mostTradedStocks.map((stock, index) => (
+                                    <div key={stock.ticker} style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'space-between',
+                                        padding: '8px 0',
+                                        borderBottom: index < analytics.mostTradedStocks.length - 1 ? '1px solid #e5e7eb' : 'none'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span style={{ fontSize: '14px', fontWeight: '500', color: '#6b7280', width: '24px' }}>{index + 1}.</span>
+                                            <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>{stock.ticker}</span>
+                                            <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px' }}>({stock.count} trades)</span>
+                                        </div>
+                                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>
+                                            ${(stock.volume / 1000000).toFixed(1)}M
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Party Breakdown */}
+                        <div style={{ marginBottom: '24px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '500', color: '#333', margin: '0 0 12px 0' }}>Trading by Party</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                                {analytics.partyBreakdown.map((party) => (
+                                    <div key={party.party} style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '16px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                            <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>
+                                                {party.party === 'D' ? 'Democrats' : party.party === 'R' ? 'Republicans' : 'Independents'}
+                                            </span>
+                                            <span style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                padding: '4px 8px',
+                                                borderRadius: '9999px',
+                                                fontSize: '11px',
+                                                fontWeight: '500',
+                                                backgroundColor: party.party === 'D' ? '#dbeafe' : party.party === 'R' ? '#fee2e2' : '#f3e8ff',
+                                                color: party.party === 'D' ? '#1e40af' : party.party === 'R' ? '#991b1b' : '#7c3aed'
+                                            }}>
+                                                {party.count} trades
+                                            </span>
+                                        </div>
+                                        <div style={{ fontSize: '20px', fontWeight: '600', color: '#111827' }}>
+                                            ${(party.volume / 1000000).toFixed(1)}M
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Monthly Trends */}
+                        <div>
+                            <h4 style={{ fontSize: '16px', fontWeight: '500', color: '#333', margin: '0 0 12px 0' }}>Monthly Trading Trends</h4>
+                            <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '16px' }}>
+                                {analytics.monthlyTrends.map((trend) => (
+                                    <div key={trend.month} style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'space-between',
+                                        padding: '8px 0',
+                                        borderBottom: '1px solid #e5e7eb'
+                                    }}>
+                                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>{trend.month}</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                            <span style={{ fontSize: '12px', color: '#6b7280' }}>{trend.count} trades</span>
+                                            <span style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>
+                                                ${(trend.volume / 1000000).toFixed(1)}M
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            } catch (error) {
+                console.error('Error testing trading analytics:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function clearCongressionalData() {
+            const container = document.getElementById('congressional-trading-test-container');
+            container.innerHTML = '';
+        }
+
+        // Log that everything is loaded
+        console.log('React Component Playground loaded successfully!');
+        console.log('React:', typeof React);
+        console.log('ReactDOM:', typeof ReactDOM);
+        console.log('Babel:', typeof Babel);
+    </script>
+</body>
+</html>
