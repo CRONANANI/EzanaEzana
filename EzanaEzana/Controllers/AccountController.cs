@@ -1,12 +1,13 @@
-using Ezana.Models;
-using Ezana.ViewModels;
+using EzanaEzana.Models;
+using EzanaEzana.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
-namespace Ezana.Controllers
+namespace EzanaEzana.Controllers
 {
     [Authorize]
     public class AccountController : Controller

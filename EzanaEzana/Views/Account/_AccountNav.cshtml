@@ -1,30 +1,33 @@
-<div class="list-group mb-4">
-    <a asp-controller="Account" asp-action="Index" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
-        <i class="bi bi-person"></i> Profile
-    </a>
-    <a asp-controller="Account" asp-action="ChangePassword" class="list-group-item list-group-item-action @(ViewContext.RouteData.Values["Action"].ToString() == "ChangePassword" ? "active" : "")">
-        <i class="bi bi-key"></i> Change Password
-    </a>
-    <a asp-controller="Dashboard" asp-action="InvestmentPreferences" class="list-group-item list-group-item-action">
-        <i class="bi bi-sliders"></i> Investment Preferences
-    </a>
-    <a asp-controller="Account" asp-action="DeleteAccount" class="list-group-item list-group-item-action text-danger">
-        <i class="bi bi-trash"></i> Delete Account
-    </a>
+<div class="shadcn-card mb-4">
+    <div class="p-4 border-b border-border bg-muted">
+        <h5 class="mb-0 text-foreground">Account Settings</h5>
+    </div>
+    <div class="p-0">
+        <a asp-controller="Account" asp-action="Index" class="block p-4 border-b border-border hover:bg-muted transition-colors @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "bg-primary text-primary-foreground" : "text-foreground")">
+            <i class="bi bi-person me-2"></i> Profile
+        </a>
+        <a asp-controller="Account" asp-action="ChangePassword" class="block p-4 border-b border-border hover:bg-muted transition-colors @(ViewContext.RouteData.Values["Action"].ToString() == "ChangePassword" ? "bg-primary text-primary-foreground" : "text-foreground")">
+            <i class="bi bi-key me-2"></i> Change Password
+        </a>
+        <a asp-controller="Dashboard" asp-action="InvestmentPreferences" class="block p-4 border-b border-border hover:bg-muted transition-colors text-foreground">
+            <i class="bi bi-sliders me-2"></i> Investment Preferences
+        </a>
+        <a asp-controller="Account" asp-action="DeleteAccount" class="block p-4 hover:bg-muted transition-colors text-destructive">
+            <i class="bi bi-trash me-2"></i> Delete Account
+        </a>
+    </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header bg-info text-white">
+<div class="shadcn-card mb-4">
+    <div class="p-4 border-b border-border bg-info text-white">
         <h5 class="mb-0">Quick Links</h5>
     </div>
-    <div class="card-body">
-        <div class="list-group">
-            <a asp-controller="Dashboard" asp-action="Index" class="list-group-item list-group-item-action">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
-            <a asp-controller="GRPV" asp-action="Index" class="list-group-item list-group-item-action">
-                <i class="bi bi-bar-chart-fill"></i> GRPV Analysis
-            </a>
-        </div>
+    <div class="p-0">
+        <a asp-controller="Dashboard" asp-action="Index" class="block p-4 border-b border-border hover:bg-muted transition-colors text-foreground">
+            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+        </a>
+        <a asp-controller="GRPV" asp-action="Index" class="block p-4 hover:bg-muted transition-colors text-foreground">
+            <i class="bi bi-bar-chart-fill me-2"></i> GRPV Analysis
+        </a>
     </div>
 </div> 

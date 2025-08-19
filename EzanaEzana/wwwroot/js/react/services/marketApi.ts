@@ -1,16 +1,33 @@
 import axios, { AxiosInstance } from 'axios';
 
-// Market API Service - Now with Finnhub Integration + Mock Data Fallbacks
+// Market API Service - Now with Finnhub Integration + WebSocket Real-time Data + Mock Data Fallbacks
 // We'll gradually add real API integrations while keeping mock data as backup
 
 // API Configuration
 const API_CONFIG = {
   FINNHUB: {
     BASE_URL: 'https://finnhub.io/api/v1',
+    WEBSOCKET_URL: 'wss://ws.finnhub.io',
     API_KEY: 'd2e9vqhr01qr1ro8tkn0d2e9vqhr01qr1ro8tkng',
     FREE_TIER_LIMIT: 60 // requests per minute
   }
 };
+
+// WebSocket message types
+export interface WebSocketMessage {
+  type: 'trade' | 'ping' | 'subscribe' | 'unsubscribe' | 'error';
+  data?: any[];
+  symbol?: string;
+  error?: string;
+}
+
+export interface TradeData {
+  symbol: string;
+  price: number;
+  volume: number;
+  timestamp: number;
+  conditions: string[];
+}
 
 // Types for market data
 export interface StockQuote {
@@ -26,6 +43,8 @@ export interface StockQuote {
   dividendYield: number;
   sector: string;
   industry: string;
+  lastUpdated: string;
+  isRealTime: boolean;
 }
 
 export interface CompanyInfo {
@@ -122,7 +141,9 @@ class MockDataGenerator {
       dividend: Math.round((Math.random() * 5) * 100) / 100,
       dividendYield: Math.round((Math.random() * 3) * 100) / 100,
       sector: this.getRandomSector(),
-      industry: this.getRandomIndustry()
+      industry: this.getRandomIndustry(),
+      lastUpdated: new Date().toISOString(),
+      isRealTime: true
     };
   }
 
@@ -311,6 +332,245 @@ class MockDataGenerator {
   }
 }
 
+// WebSocket Service for Real-time Data
+class WebSocketService {
+  private ws: WebSocket | null = null;
+  private isConnected: boolean = false;
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 5;
+  private reconnectDelay: number = 1000;
+  private subscribedSymbols: Set<string> = new Set();
+  private messageHandlers: Map<string, (data: any) => void> = new Map();
+  private pingInterval: NodeJS.Timeout | null = null;
+
+  constructor() {
+    this.setupMessageHandlers();
+  }
+
+  private setupMessageHandlers() {
+    // Handle different message types
+    this.messageHandlers.set('trade', (data) => this.handleTradeData(data));
+    this.messageHandlers.set('ping', () => this.handlePing());
+    this.messageHandlers.set('error', (data) => this.handleError(data));
+  }
+
+  connect(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.ws = new WebSocket(API_CONFIG.FINNHUB.WEBSOCKET_URL);
+        
+        this.ws.onopen = () => {
+          console.log('WebSocket connected to Finnhub');
+          this.isConnected = true;
+          this.reconnectAttempts = 0;
+          this.startPingInterval();
+          this.resubscribeSymbols();
+          resolve(true);
+        };
+
+        this.ws.onmessage = (event) => {
+          try {
+            const message: WebSocketMessage = JSON.parse(event.data);
+            this.handleMessage(message);
+          } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+          }
+        };
+
+        this.ws.onclose = () => {
+          console.log('WebSocket disconnected');
+          this.isConnected = false;
+          this.stopPingInterval();
+          this.attemptReconnect();
+        };
+
+        this.ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          this.isConnected = false;
+          reject(error);
+        };
+
+        // Set connection timeout
+        setTimeout(() => {
+          if (!this.isConnected) {
+            reject(new Error('WebSocket connection timeout'));
+          }
+        }, 10000);
+
+      } catch (error) {
+        console.error('Failed to create WebSocket connection:', error);
+        reject(error);
+      }
+    });
+  }
+
+  private handleMessage(message: WebSocketMessage) {
+    const handler = this.messageHandlers.get(message.type);
+    if (handler) {
+      handler(message.data);
+    } else {
+      console.log('Unhandled WebSocket message type:', message.type);
+    }
+  }
+
+  private handleTradeData(data: any[]) {
+    if (Array.isArray(data)) {
+      data.forEach(trade => {
+        // Emit trade data to subscribers
+        this.emit('trade', {
+          symbol: trade.s,
+          price: trade.p,
+          volume: trade.v,
+          timestamp: trade.t,
+          conditions: trade.c || []
+        });
+      });
+    }
+  }
+
+  private handlePing() {
+    // Respond to ping with pong
+    if (this.ws && this.isConnected) {
+      this.ws.send(JSON.stringify({ type: 'pong' }));
+    }
+  }
+
+  private handleError(data: any) {
+    console.error('WebSocket error:', data);
+  }
+
+  private startPingInterval() {
+    this.pingInterval = setInterval(() => {
+      if (this.ws && this.isConnected) {
+        this.ws.send(JSON.stringify({ type: 'ping' }));
+      }
+    }, 30000); // Send ping every 30 seconds
+  }
+
+  private stopPingInterval() {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
+  }
+
+  private async attemptReconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('Max reconnection attempts reached');
+      return;
+    }
+
+    this.reconnectAttempts++;
+    console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+
+    setTimeout(async () => {
+      try {
+        await this.connect();
+      } catch (error) {
+        console.error('Reconnection failed:', error);
+      }
+    }, this.reconnectDelay * this.reconnectAttempts);
+  }
+
+  subscribe(symbol: string): boolean {
+    if (!this.ws || !this.isConnected) {
+      console.error('WebSocket not connected');
+      return false;
+    }
+
+    try {
+      const message = {
+        type: 'subscribe',
+        symbol: symbol.toUpperCase()
+      };
+      
+      this.ws.send(JSON.stringify(message));
+      this.subscribedSymbols.add(symbol.toUpperCase());
+      console.log(`Subscribed to ${symbol.toUpperCase()}`);
+      return true;
+    } catch (error) {
+      console.error(`Failed to subscribe to ${symbol}:`, error);
+      return false;
+    }
+  }
+
+  unsubscribe(symbol: string): boolean {
+    if (!this.ws || !this.isConnected) {
+      return false;
+    }
+
+    try {
+      const message = {
+        type: 'unsubscribe',
+        symbol: symbol.toUpperCase()
+      };
+      
+      this.ws.send(JSON.stringify(message));
+      this.subscribedSymbols.delete(symbol.toUpperCase());
+      console.log(`Unsubscribed from ${symbol.toUpperCase()}`);
+      return true;
+    } catch (error) {
+      console.error(`Failed to unsubscribe from ${symbol}:`, error);
+      return false;
+    }
+  }
+
+  private resubscribeSymbols() {
+    this.subscribedSymbols.forEach(symbol => {
+      this.subscribe(symbol);
+    });
+  }
+
+  disconnect() {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+    this.isConnected = false;
+    this.stopPingInterval();
+  }
+
+  isConnectedStatus(): boolean {
+    return this.isConnected;
+  }
+
+  getSubscribedSymbols(): string[] {
+    return Array.from(this.subscribedSymbols);
+  }
+
+  // Event emitter functionality
+  private listeners: Map<string, ((data: any) => void)[]> = new Map();
+
+  on(event: string, callback: (data: any) => void) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, []);
+    }
+    this.listeners.get(event)!.push(callback);
+  }
+
+  off(event: string, callback: (data: any) => void) {
+    if (this.listeners.has(event)) {
+      const callbacks = this.listeners.get(event)!;
+      const index = callbacks.indexOf(callback);
+      if (index > -1) {
+        callbacks.splice(index, 1);
+      }
+    }
+  }
+
+  private emit(event: string, data: any) {
+    if (this.listeners.has(event)) {
+      this.listeners.get(event)!.forEach(callback => {
+        try {
+          callback(data);
+        } catch (error) {
+          console.error('Error in event callback:', error);
+        }
+      });
+    }
+  }
+}
+
 // Main Market API Service with Finnhub Integration
 class MarketApiService {
   private finnhub: AxiosInstance;
@@ -318,13 +578,109 @@ class MarketApiService {
   private popularCrypto = ['BTC', 'ETH', 'USDT', 'BNB', 'ADA', 'SOL', 'DOT', 'DOGE', 'AVAX', 'MATIC'];
   private popularForex = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'USD/CHF', 'AUD/USD', 'USD/CAD', 'NZD/USD'];
   private useMockData: boolean = false; // Now using real Finnhub API calls
+  private webSocketService: WebSocketService; // Add WebSocket service instance
+  private realTimeData: Map<string, StockQuote> = new Map();
+  private priceUpdateCallbacks: Map<string, ((quote: StockQuote) => void)[]> = new Map();
 
   constructor() {
     this.finnhub = axios.create({
       baseURL: API_CONFIG.FINNHUB.BASE_URL,
       timeout: 10000
     });
+    this.webSocketService = new WebSocketService(); // Initialize WebSocket service
+    this.setupWebSocketListeners();
     console.log('Market API Service initialized with Finnhub API integration');
+  }
+
+  private setupWebSocketListeners() {
+    // Listen for real-time trade data
+    this.webSocketService.on('trade', (tradeData: TradeData) => {
+      this.handleRealTimeTrade(tradeData);
+    });
+  }
+
+  private handleRealTimeTrade(tradeData: TradeData) {
+    const symbol = tradeData.symbol;
+    const currentQuote = this.realTimeData.get(symbol);
+    
+    if (currentQuote) {
+      // Update existing quote with real-time data
+      const updatedQuote: StockQuote = {
+        ...currentQuote,
+        price: tradeData.price,
+        volume: tradeData.volume,
+        lastUpdated: new Date(tradeData.timestamp).toISOString(),
+        isRealTime: true
+      };
+
+      // Calculate change and change percent
+      if (currentQuote.price !== tradeData.price) {
+        updatedQuote.change = tradeData.price - currentQuote.price;
+        updatedQuote.changePercent = (updatedQuote.change / currentQuote.price) * 100;
+      }
+
+      this.realTimeData.set(symbol, updatedQuote);
+
+      // Notify subscribers of price update
+      this.notifyPriceUpdate(symbol, updatedQuote);
+    }
+  }
+
+  private notifyPriceUpdate(symbol: string, quote: StockQuote) {
+    const callbacks = this.priceUpdateCallbacks.get(symbol);
+    if (callbacks) {
+      callbacks.forEach(callback => {
+        try {
+          callback(quote);
+        } catch (error) {
+          console.error(`Error in price update callback for ${symbol}:`, error);
+        }
+      });
+    }
+  }
+
+  // Subscribe to real-time price updates for a symbol
+  subscribeToPriceUpdates(symbol: string, callback: (quote: StockQuote) => void): boolean {
+    const upperSymbol = symbol.toUpperCase();
+    
+    if (!this.priceUpdateCallbacks.has(upperSymbol)) {
+      this.priceUpdateCallbacks.set(upperSymbol, []);
+    }
+    
+    this.priceUpdateCallbacks.get(upperSymbol)!.push(callback);
+    
+    // Also subscribe to WebSocket updates
+    this.webSocketService.subscribe(upperSymbol);
+    
+    return true;
+  }
+
+  // Unsubscribe from real-time price updates
+  unsubscribeFromPriceUpdates(symbol: string, callback: (quote: StockQuote) => void): boolean {
+    const upperSymbol = symbol.toUpperCase();
+    const callbacks = this.priceUpdateCallbacks.get(upperSymbol);
+    
+    if (callbacks) {
+      const index = callbacks.indexOf(callback);
+      if (index > -1) {
+        callbacks.splice(index, 1);
+        
+        // If no more callbacks, unsubscribe from WebSocket
+        if (callbacks.length === 0) {
+          this.priceUpdateCallbacks.delete(upperSymbol);
+          this.webSocketService.unsubscribe(upperSymbol);
+        }
+        
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  // Get cached real-time data if available
+  getCachedQuote(symbol: string): StockQuote | null {
+    return this.realTimeData.get(symbol.toUpperCase()) || null;
   }
 
   // Toggle between real API and mock data
@@ -335,32 +691,42 @@ class MarketApiService {
 
   // Stock methods with Finnhub integration
   async getStockQuote(symbol: string): Promise<StockQuote> {
+    const upperSymbol = symbol.toUpperCase();
+    
+    // Check if we have cached real-time data
+    const cachedQuote = this.realTimeData.get(upperSymbol);
+    if (cachedQuote && cachedQuote.isRealTime) {
+      return cachedQuote;
+    }
+
     if (this.useMockData) {
       await this.simulateDelay();
       const basePrice = 50 + Math.random() * 200;
-      return MockDataGenerator.generateStockQuote(symbol, basePrice);
+      const quote = MockDataGenerator.generateStockQuote(upperSymbol, basePrice);
+      this.realTimeData.set(upperSymbol, quote);
+      return quote;
     }
 
     try {
-      console.log(`Fetching real stock quote for ${symbol} from Finnhub...`);
+      console.log(`Fetching real stock quote for ${upperSymbol} from Finnhub...`);
       const response = await this.finnhub.get('/quote', {
         params: {
-          symbol: symbol.toUpperCase(),
+          symbol: upperSymbol,
           token: API_CONFIG.FINNHUB.API_KEY
         }
       });
 
       const data = response.data;
       if (!data.c) {
-        throw new Error(`No data found for symbol: ${symbol}`);
+        throw new Error(`No data found for symbol: ${upperSymbol}`);
       }
 
       // Get company profile for additional info
-      const profile = await this.getCompanyProfile(symbol);
+      const profile = await this.getCompanyProfile(upperSymbol);
       
-      return {
-        symbol: symbol.toUpperCase(),
-        name: profile.name || symbol,
+      const quote: StockQuote = {
+        symbol: upperSymbol,
+        name: profile.name || upperSymbol,
         price: data.c, // Current price
         change: data.d, // Change
         changePercent: data.dp, // Change percent
@@ -370,15 +736,24 @@ class MarketApiService {
         dividend: profile.dividend || 0,
         dividendYield: profile.dividendYield || 0,
         sector: profile.sector || 'Unknown',
-        industry: profile.industry || 'Unknown'
+        industry: profile.industry || 'Unknown',
+        lastUpdated: new Date().toISOString(),
+        isRealTime: false
       };
+
+      // Cache the quote
+      this.realTimeData.set(upperSymbol, quote);
+      
+      return quote;
     } catch (error) {
-      console.error(`Error fetching stock quote for ${symbol} from Finnhub:`, error);
-      console.log(`Falling back to mock data for ${symbol}`);
+      console.error(`Error fetching stock quote for ${upperSymbol} from Finnhub:`, error);
+      console.log(`Falling back to mock data for ${upperSymbol}`);
       
       // Fallback to mock data
       const basePrice = 50 + Math.random() * 200;
-      return MockDataGenerator.generateStockQuote(symbol, basePrice);
+      const quote = MockDataGenerator.generateStockQuote(upperSymbol, basePrice);
+      this.realTimeData.set(upperSymbol, quote);
+      return quote;
     }
   }
 
@@ -427,11 +802,31 @@ class MarketApiService {
 
   async getMultipleStockQuotes(symbols: string[]): Promise<StockQuote[]> {
     const promises = symbols.map(symbol => this.getStockQuote(symbol));
-    return Promise.all(promises);
+    const quotes = await Promise.all(promises);
+    
+    // Cache all quotes
+    quotes.forEach(quote => {
+      this.realTimeData.set(quote.symbol, quote);
+    });
+    
+    return quotes;
   }
 
   async getPopularStocks(): Promise<StockQuote[]> {
-    return this.getMultipleStockQuotes(this.popularStocks);
+    const quotes = await this.getMultipleStockQuotes(this.popularStocks);
+    
+    // Subscribe to real-time updates for popular stocks
+    quotes.forEach(quote => {
+      if (!this.webSocketService.isConnectedStatus()) {
+        this.webSocketService.connect().then(() => {
+          this.webSocketService.subscribe(quote.symbol);
+        });
+      } else {
+        this.webSocketService.subscribe(quote.symbol);
+      }
+    });
+    
+    return quotes;
   }
 
   async searchStocks(query: string): Promise<{ symbol: string; name: string }[]> {
@@ -510,6 +905,27 @@ class MarketApiService {
     return indicators.map(name => MockDataGenerator.generateEconomicIndicator(name));
   }
 
+  // WebSocket methods
+  async connectWebSocket(): Promise<boolean> {
+    return this.webSocketService.connect();
+  }
+
+  subscribeToSymbol(symbol: string): boolean {
+    return this.webSocketService.subscribe(symbol);
+  }
+
+  unsubscribeFromSymbol(symbol: string): boolean {
+    return this.webSocketService.unsubscribe(symbol);
+  }
+
+  getWebSocketStatus(): boolean {
+    return this.webSocketService.isConnectedStatus();
+  }
+
+  getSubscribedSymbols(): string[] {
+    return this.webSocketService.getSubscribedSymbols();
+  }
+
   // Utility methods
   private async simulateDelay(min: number = 100, max: number = 500): Promise<void> {
     const delay = Math.random() * (max - min) + min;
@@ -538,9 +954,32 @@ class MarketApiService {
         enabled: this.useMockData,
         available: true,
         note: 'Available as fallback if API calls fail'
+      },
+      webSocket: {
+        connected: this.webSocketService.isConnectedStatus(),
+        subscribedSymbols: this.getSubscribedSymbols(),
+        status: this.webSocketService.isConnectedStatus() ? 'Connected' : 'Disconnected'
       }
     };
+  }
+
+  // Get WebSocket service instance for direct access
+  getWebSocketService() {
+    return this.webSocketService;
+  }
+
+  // Get real-time data cache
+  getRealTimeDataCache() {
+    return new Map(this.realTimeData);
+  }
+
+  // Clear real-time data cache
+  clearRealTimeDataCache() {
+    this.realTimeData.clear();
   }
 }
 
 export const marketApiService = new MarketApiService();
+
+// Export WebSocket service for direct access if needed
+export const webSocketService = marketApiService.getWebSocketService();

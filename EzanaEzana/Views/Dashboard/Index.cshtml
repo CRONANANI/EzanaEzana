@@ -1,4 +1,5 @@
-@model Ezana.ViewModels.DashboardViewModel
+@using EzanaEzana.ViewModels
+@model DashboardViewModel
 @{
     ViewData["Title"] = "Investment Dashboard";
 }
@@ -6,8 +7,22 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="display-4">Welcome, @Model.FirstName!</h1>
-            <p class="lead">Here's your investment overview and recommendations.</p>
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="ezana-animate-fade-in">
+                    <h1 class="display-4 fw-bold text-primary mb-3">
+                        Welcome back, @Model.FirstName! 👋
+                    </h1>
+                    <p class="lead text-muted-foreground mb-0">
+                        Here's your personalized investment overview and smart recommendations.
+                    </p>
+                </div>
+                <div class="ezana-animate-fade-in">
+                    <a asp-controller="Auth0" asp-action="Logout" class="btn btn-outline-danger d-flex align-items-center gap-2" style="font-weight: 500; padding: 0.75rem 1.5rem; border-radius: 0.5rem; transition: all 0.2s ease; box-shadow: var(--ezana-shadow-sm);" onmouseover="this.style.backgroundColor='var(--bs-danger)'; this.style.color='white'; this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--ezana-shadow-md)'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--bs-danger)'; this.style.transform='translateY(0)'; this.style.boxShadow='var(--ezana-shadow-sm)'">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Sign Out
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -17,11 +32,11 @@
     <!-- Original Dashboard Content (can be hidden or removed later) -->
     <div class="row mb-4" style="display: none;">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="card-title mb-0">Investment Recommendations</h5>
+            <div class="shadcn-card">
+                <div class="p-4 border-b border-border bg-muted">
+                    <h5 class="card-title mb-0 text-foreground">Investment Recommendations</h5>
                 </div>
-                <div class="card-body">
+                <div class="p-6">
                     @if (Model.InvestmentRecommendations.TryGetValue("message", out var messageObj) && messageObj is string message)
                     {
                         <p>@message</p>
@@ -30,23 +45,23 @@
                     @if (Model.InvestmentRecommendations.TryGetValue("recommendations", out var recObj) && recObj is List<Dictionary<string, object>> recommendations && recommendations.Any())
                     {
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table table-hover">
+                                <thead class="bg-muted">
                                     <tr>
-                                        <th>Type</th>
-                                        <th>Name</th>
-                                        <th class="text-end">Allocation</th>
-                                        <th>Risk Level</th>
+                                        <th class="text-foreground">Type</th>
+                                        <th class="text-foreground">Name</th>
+                                        <th class="text-end text-foreground">Allocation</th>
+                                        <th class="text-foreground">Risk Level</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var rec in recommendations)
                                     {
                                         <tr>
-                                            <td>@(rec.TryGetValue("type", out var typeObj) ? typeObj.ToString() : "")</td>
-                                            <td>@(rec.TryGetValue("name", out var nameObj) ? nameObj.ToString() : "")</td>
-                                            <td class="text-end">@(rec.TryGetValue("allocation", out var alloc1) ? $"{Convert.ToDecimal(alloc1)}%" : "0%")</td>
-                                            <td>@(rec.TryGetValue("risk", out var riskObj) ? riskObj.ToString() : "")</td>
+                                            <td class="text-foreground">@(rec.TryGetValue("type", out var typeObj) ? typeObj.ToString() : "")</td>
+                                            <td class="text-foreground">@(rec.TryGetValue("name", out var nameObj) ? nameObj.ToString() : "")</td>
+                                            <td class="text-end text-foreground">@(rec.TryGetValue("allocation", out var alloc1) ? $"{Convert.ToDecimal(alloc1)}%" : "0%")</td>
+                                            <td class="text-foreground">@(rec.TryGetValue("risk", out var riskObj) ? riskObj.ToString() : "")</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -55,28 +70,28 @@
                     }
                     else if (Model.InvestmentRecommendations.TryGetValue("defaultRecommendations", out var defaultRecObj) && defaultRecObj is List<Dictionary<string, object>> defaultRecs && defaultRecs.Any())
                     {
-                        <div class="alert alert-info mb-3">
-                            You haven't set your investment preferences yet. <a asp-action="InvestmentPreferences" class="alert-link">Set your preferences</a> to get personalized recommendations.
+                        <div class="p-4 bg-accent text-accent-foreground rounded-lg mb-3">
+                            You haven't set your investment preferences yet. <a asp-action="InvestmentPreferences" class="text-primary fw-bold">Set your preferences</a> to get personalized recommendations.
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table table-hover">
+                                <thead class="bg-muted">
                                     <tr>
-                                        <th>Type</th>
-                                        <th>Name</th>
-                                        <th class="text-end">Allocation</th>
-                                        <th>Risk Level</th>
+                                        <th class="text-foreground">Type</th>
+                                        <th class="text-foreground">Name</th>
+                                        <th class="text-end text-foreground">Allocation</th>
+                                        <th class="text-foreground">Risk Level</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var rec in defaultRecs)
                                     {
                                         <tr>
-                                            <td>@(rec.TryGetValue("type", out var typeObj) ? typeObj.ToString() : "")</td>
-                                            <td>@(rec.TryGetValue("name", out var nameObj) ? nameObj.ToString() : "")</td>
-                                            <td class="text-end">@(rec.TryGetValue("allocation", out var alloc2) ? $"{Convert.ToDecimal(alloc2)}%" : "0%")</td>
-                                            <td>@(rec.TryGetValue("risk", out var riskObj) ? riskObj.ToString() : "")</td>
+                                            <td class="text-foreground">@(rec.TryGetValue("type", out var typeObj) ? typeObj.ToString() : "")</td>
+                                            <td class="text-foreground">@(rec.TryGetValue("name", out var nameObj) ? nameObj.ToString() : "")</td>
+                                            <td class="text-end text-foreground">@(rec.TryGetValue("allocation", out var alloc2) ? $"{Convert.ToDecimal(alloc2)}%" : "0%")</td>
+                                            <td class="text-foreground">@(rec.TryGetValue("risk", out var riskObj) ? riskObj.ToString() : "")</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -85,8 +100,8 @@
                     }
                     else
                     {
-                        <div class="alert alert-warning">
-                            No investment recommendations available. <a asp-action="InvestmentPreferences" class="alert-link">Set your investment preferences</a> to get personalized recommendations.
+                        <div class="p-4 bg-warning-100 text-warning-800 rounded-lg">
+                            No investment recommendations available. <a asp-action="InvestmentPreferences" class="text-warning-600 fw-bold">Set your investment preferences</a> to get personalized recommendations.
                         </div>
                     }
                 </div>

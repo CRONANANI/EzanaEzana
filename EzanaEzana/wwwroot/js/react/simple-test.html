@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple React Test</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple React Test</h1>
+        
+        <div class="test-section">
+            <h3>Version Check</h3>
+            <button onclick="checkVersions()">Check Versions</button>
+            <div class="result">
+                React: <span id="react-version">Loading...</span><br>
+                ReactDOM: <span id="react-dom-version">Loading...</span><br>
+                Babel: <span id="babel-status">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Basic JavaScript Test</h3>
+            <button onclick="testBasicJS()">Test Basic JS</button>
+            <div id="basic-js-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>React Component Test</h3>
+            <button onclick="testReactComponent()">Test React Component</button>
+            <div id="react-test-container" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Console Log</h3>
+            <button onclick="clearConsole()">Clear Console</button>
+            <div id="console-output" class="result" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        // Override console.log to capture output
+        const originalConsoleLog = console.log;
+        const consoleOutput = document.getElementById('console-output');
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            consoleOutput.innerHTML += message + '<br>';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+
+        // Version check function
+        function checkVersions() {
+            try {
+                console.log('=== Checking versions ===');
+                
+                const reactVersion = React?.version || 'Not loaded';
+                const reactDomVersion = ReactDOM?.version || 'Not loaded';
+                const babelStatus = typeof Babel !== 'undefined' ? 'Loaded' : 'Not loaded';
+                
+                document.getElementById('react-version').textContent = reactVersion;
+                document.getElementById('react-dom-version').textContent = reactDomVersion;
+                document.getElementById('babel-status').textContent = babelStatus;
+                
+                console.log('React Version:', reactVersion);
+                console.log('ReactDOM Version:', reactDomVersion);
+                console.log('Babel Status:', babelStatus);
+                
+            } catch (error) {
+                console.error('Error checking versions:', error);
+                document.getElementById('react-version').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Basic JavaScript test
+        function testBasicJS() {
+            try {
+                console.log('=== Testing basic JavaScript ===');
+                
+                const result = document.getElementById('basic-js-result');
+                
+                // Test array operations
+                const testArray = [1, 2, 3, 4, 5];
+                const doubled = testArray.map(x => x * 2);
+                const sum = testArray.reduce((a, b) => a + b, 0);
+                
+                // Test object operations
+                const testObj = { name: 'Test', value: 42 };
+                const objString = JSON.stringify(testObj);
+                
+                result.innerHTML = `
+                    <strong>Array Test:</strong> ${testArray.join(', ')} → ${doubled.join(', ')}<br>
+                    <strong>Sum:</strong> ${sum}<br>
+                    <strong>Object Test:</strong> ${objString}<br>
+                    <strong>Status:</strong> ✅ Basic JavaScript is working!
+                `;
+                
+                console.log('Basic JS test completed successfully');
+                
+            } catch (error) {
+                console.error('Error in basic JS test:', error);
+                document.getElementById('basic-js-result').innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+
+        // React component test
+        function testReactComponent() {
+            try {
+                console.log('=== Testing React component ===');
+                
+                const container = document.getElementById('react-test-container');
+                const root = ReactDOM.createRoot(container);
+                
+                const TestComponent = () => {
+                    const [count, setCount] = React.useState(0);
+                    
+                    return React.createElement('div', { style: { padding: '20px', border: '1px solid #ddd', borderRadius: '5px' } }, [
+                        React.createElement('h4', { key: 'title' }, 'React Component Test'),
+                        React.createElement('p', { key: 'count' }, `Count: ${count}`),
+                        React.createElement('button', {
+                            key: 'button',
+                            onClick: () => setCount(count + 1),
+                            style: { background: '#28a745', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }
+                        }, 'Increment'),
+                        React.createElement('button', {
+                            key: 'reset',
+                            onClick: () => setCount(0),
+                            style: { background: '#6c757d', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', marginLeft: '10px' }
+                        }, 'Reset')
+                    ]);
+                };
+                
+                root.render(React.createElement(TestComponent));
+                console.log('React component rendered successfully');
+                
+            } catch (error) {
+                console.error('Error rendering React component:', error);
+                document.getElementById('react-test-container').innerHTML = '❌ Error: ' + error.message;
+            }
+        }
+
+        // Clear console output
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        // Auto-check versions on load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, checking versions...');
+            setTimeout(checkVersions, 100);
+        });
+
+        // Log that everything is loaded
+        console.log('Simple test page loaded successfully!');
+        console.log('React:', typeof React);
+        console.log('ReactDOM:', typeof ReactDOM);
+        console.log('Babel:', typeof Babel);
+    </script>
+</body>
+</html>
+

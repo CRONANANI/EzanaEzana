@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple React 18 Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { border: 2px solid #007bff; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>Simple React 18 Test</h1>
+    
+    <div id="status-container">
+        <div class="status loading">Checking React availability...</div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Test Controls</h3>
+        <button onclick="checkReact()">Check React Status</button>
+        <button onclick="testSimpleComponent()">Test Simple Component</button>
+        <button onclick="testCounter()">Test Counter Component</button>
+        <button onclick="clearContainer()">Clear Container</button>
+    </div>
+    
+    <div id="test-container" class="test-container">
+        <p>Test results will appear here...</p>
+    </div>
+    
+    <!-- Load React 18 from CDN -->
+    <script src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    
+    <script>
+        // Check React availability
+        function checkReact() {
+            const statusContainer = document.getElementById('status-container');
+            const testContainer = document.getElementById('test-container');
+            
+            console.log('=== React Status Check ===');
+            console.log('React:', typeof React);
+            console.log('ReactDOM:', typeof ReactDOM);
+            console.log('React version:', typeof React !== 'undefined' ? React.version : 'Not loaded');
+            console.log('ReactDOM version:', typeof ReactDOM !== 'undefined' ? ReactDOM.version : 'Not loaded');
+            
+            if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+                statusContainer.innerHTML = `
+                    <div class="status success">
+                        ✅ React ${React.version} and ReactDOM ${ReactDOM.version} loaded successfully!
+                    </div>
+                `;
+                testContainer.innerHTML = '<p style="color: green;">React is ready for testing!</p>';
+            } else {
+                statusContainer.innerHTML = `
+                    <div class="status error">
+                        ❌ React or ReactDOM failed to load! 
+                        <br>React: ${typeof React}, ReactDOM: ${typeof ReactDOM}
+                    </div>
+                `;
+                testContainer.innerHTML = '<p style="color: red;">React failed to load. Check console for errors.</p>';
+            }
+        }
+        
+        // Test simple React component
+        function testSimpleComponent() {
+            const container = document.getElementById('test-container');
+            
+            if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+                container.innerHTML = '<p style="color: red;">React not available!</p>';
+                return;
+            }
+            
+            try {
+                const root = ReactDOM.createRoot(container);
+                
+                const SimpleComponent = () => {
+                    return React.createElement('div', { style: { textAlign: 'center', padding: '20px' } }, [
+                        React.createElement('h2', { key: 'title', style: { color: '#007bff' } }, 'Simple React Component'),
+                        React.createElement('p', { key: 'message' }, 'This component was created using React.createElement'),
+                        React.createElement('div', { key: 'info', style: { backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px' } }, [
+                            React.createElement('p', { key: 'react-version' }, `React Version: ${React.version}`),
+                            React.createElement('p', { key: 'reactdom-version' }, `ReactDOM Version: ${ReactDOM.version}`)
+                        ])
+                    ]);
+                };
+                
+                root.render(React.createElement(SimpleComponent));
+                console.log('Simple component rendered successfully!');
+                
+            } catch (error) {
+                console.error('Error rendering simple component:', error);
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Test counter component with state
+        function testCounter() {
+            const container = document.getElementById('test-container');
+            
+            if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+                container.innerHTML = '<p style="color: red;">React not available!</p>';
+                return;
+            }
+            
+            try {
+                const root = ReactDOM.createRoot(container);
+                
+                const CounterComponent = () => {
+                    const [count, setCount] = React.useState(0);
+                    
+                    return React.createElement('div', { style: { textAlign: 'center', padding: '20px' } }, [
+                        React.createElement('h2', { key: 'title', style: { color: '#28a745' } }, 'Counter Component'),
+                        React.createElement('p', { key: 'count', style: { fontSize: '24px', fontWeight: 'bold' } }, `Count: ${count}`),
+                        React.createElement('div', { key: 'buttons', style: { marginTop: '20px' } }, [
+                            React.createElement('button', {
+                                key: 'increment',
+                                onClick: () => setCount(count + 1),
+                                style: { margin: '0 10px', padding: '10px 20px', fontSize: '16px' }
+                            }, 'Increment'),
+                            React.createElement('button', {
+                                key: 'decrement',
+                                onClick: () => setCount(count - 1),
+                                style: { margin: '0 10px', padding: '10px 20px', fontSize: '16px' }
+                            }, 'Decrement'),
+                            React.createElement('button', {
+                                key: 'reset',
+                                onClick: () => setCount(0),
+                                style: { margin: '0 10px', padding: '10px 20px', fontSize: '16px' }
+                            }, 'Reset')
+                        ])
+                    ]);
+                };
+                
+                root.render(React.createElement(CounterComponent));
+                console.log('Counter component rendered successfully!');
+                
+            } catch (error) {
+                console.error('Error rendering counter component:', error);
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function clearContainer() {
+            document.getElementById('test-container').innerHTML = '<p>Container cleared.</p>';
+        }
+        
+        // Auto-check React when page loads
+        window.addEventListener('load', () => {
+            setTimeout(checkReact, 1000); // Check after 1 second to allow CDN to load
+        });
+    </script>
+</body>
+</html>

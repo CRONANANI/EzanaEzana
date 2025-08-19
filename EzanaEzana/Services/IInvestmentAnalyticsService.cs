@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EzanaEzana.Models;
 
-namespace Ezana.Services
+namespace EzanaEzana.Services
 {
     public interface IInvestmentAnalyticsService
     {

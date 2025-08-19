@@ -1,13 +1,14 @@
-using Ezana.Models;
-using Ezana.Services;
-using Ezana.ViewModels;
+using EzanaEzana.Models;
+using EzanaEzana.Services;
+using EzanaEzana.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
-namespace Ezana.Controllers
+namespace EzanaEzana.Controllers
 {
     [Authorize]
     public class GRPVController : Controller

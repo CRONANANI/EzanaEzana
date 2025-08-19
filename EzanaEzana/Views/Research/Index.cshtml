@@ -1,0 +1,209 @@
+@{
+    ViewData["Title"] = "Research Tools";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="ezana-animate-fade-in">
+                <h1 class="display-4 fw-bold text-primary mb-3">
+                    Research Tools 🔍
+                </h1>
+                <p class="lead text-muted-foreground mb-0">
+                    Access comprehensive market intelligence and alternative data for informed investment decisions.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiver API Dashboard Section -->
+    <div class="quiver-api-section">
+        <h2 class="quiver-api-title">Check Out What Your Public Officials Are Up To</h2>
+        <p class="quiver-api-description">Comprehensive market intelligence including congressional trading, government contracts, lobbying, and more</p>
+        
+        <div class="quiver-cards-grid">
+            <!-- Congressional Trading Card -->
+            <div class="quiver-card expandable" data-type="congress-trading">
+                <div class="quiver-card-header" onclick="toggleCardExpansion('congress-trading')">
+                    <div class="quiver-card-icon">
+                        <i class="bi bi-people-fill text-2xl"></i>
+                    </div>
+                    <div class="quiver-card-title">Historical Congress Trading</div>
+                    <div class="quiver-card-value">1,247</div>
+                    <div class="quiver-card-toggle">
+                        <i class="bi bi-chevron-down text-lg transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div class="quiver-card-content hidden" id="congress-trading-content">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Government Contracts Card -->
+            <div class="quiver-card expandable" data-type="government-contracts">
+                <div class="quiver-card-header" onclick="toggleCardExpansion('government-contracts')">
+                    <div class="quiver-card-icon">
+                        <i class="bi bi-file-earmark-text text-2xl"></i>
+                    </div>
+                    <div class="quiver-card-title">Government Contracts</div>
+                    <div class="quiver-card-value">892</div>
+                    <div class="quiver-card-toggle">
+                        <i class="bi bi-chevron-down text-lg transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div class="quiver-card-content hidden" id="government-contracts-content">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+
+            <!-- House Trading Card -->
+            <div class="quiver-card expandable" data-type="house-trading">
+                <div class="quiver-card-header" onclick="toggleCardExpansion('house-trading')">
+                    <div class="quiver-card-icon">
+                        <i class="bi bi-house-fill text-2xl"></i>
+                    </div>
+                    <div class="quiver-card-title">House Trading</div>
+                    <div class="quiver-card-value">756</div>
+                    <div class="quiver-card-toggle">
+                        <i class="bi bi-chevron-down text-lg transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div class="quiver-card-content hidden" id="house-trading-content">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Lobbying Card -->
+            <div class="quiver-card expandable" data-type="lobbying">
+                <div class="quiver-card-header" onclick="toggleCardExpansion('lobbying')">
+                    <div class="quiver-card-icon">
+                        <i class="bi bi-chat-dots text-2xl"></i>
+                    </div>
+                    <div class="quiver-card-title">Lobbying Activity</div>
+                    <div class="quiver-card-value">1,089</div>
+                    <div class="quiver-card-toggle">
+                        <i class="bi bi-chevron-down text-lg transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div class="quiver-card-content hidden" id="lobbying-content">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Senator Trading Card -->
+            <div class="quiver-card expandable" data-type="senator-trading">
+                <div class="quiver-card-header" onclick="toggleCardExpansion('senator-trading')">
+                    <div class="quiver-card-icon">
+                        <i class="bi bi-person-badge text-2xl"></i>
+                    </div>
+                    <div class="quiver-card-title">Senator Trading</div>
+                    <div class="quiver-card-value">491</div>
+                    <div class="quiver-card-toggle">
+                        <i class="bi bi-chevron-down text-lg transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div class="quiver-card-content hidden" id="senator-trading-content">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Patent Momentum Card -->
+            <div class="quiver-card expandable" data-type="patent-momentum">
+                <div class="quiver-card-header" onclick="toggleCardExpansion('patent-momentum')">
+                    <div class="quiver-card-icon">
+                        <i class="bi bi-lightbulb text-2xl"></i>
+                    </div>
+                    <div class="quiver-card-title">Patent Momentum</div>
+                    <div class="quiver-card-value">2,847</div>
+                    <div class="quiver-card-toggle">
+                        <i class="bi bi-chevron-down text-lg transition-transform duration-200"></i>
+                    </div>
+                </div>
+                <div class="quiver-card-content hidden" id="patent-momentum-content">
+                    <!-- Content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Market Sentiment Card -->
+            <div class="quiver-card">
+                <div class="quiver-card-icon">
+                    <i class="bi bi-emoji-smile text-2xl"></i>
+                </div>
+                <div class="quiver-card-title">Market Sentiment</div>
+                <div class="quiver-card-value">Bullish</div>
+                <div class="quiver-card-description">Positive sentiment across major indices</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data View Modal -->
+    <div id="data-view-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div>
+                        <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Data View</h3>
+                        <p id="modal-subtitle" class="text-gray-600 mt-1">Comprehensive market intelligence data</p>
+                    </div>
+                    <button onclick="closeDataView()" class="text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x-lg text-2xl"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <!-- Following Section -->
+                    <div id="following-section" class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg hidden">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <i class="bi bi-star-fill text-yellow-500"></i>
+                            <span class="font-medium text-yellow-800">Following (<span id="following-count">0</span>)</span>
+                        </div>
+                        <div id="following-list" class="flex flex-wrap gap-2">
+                            <!-- Following items will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="flex flex-wrap gap-4 items-center mb-6 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-4">
+                            <label class="text-sm font-medium text-gray-700">Sort by:</label>
+                            <select id="sort-select" onchange="sortData()" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="date-desc">Date (Newest First)</option>
+                                <option value="date-asc">Date (Oldest First)</option>
+                                <option value="value-desc">Value (High to Low)</option>
+                                <option value="value-asc">Value (Low to High)</option>
+                                <option value="ticker">Ticker (A-Z)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4">
+                            <label class="text-sm font-medium text-gray-700">Filter:</label>
+                            <input type="text" id="filter-input" placeholder="Filter by ticker, company, or person..." onkeyup="filterData()" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <label class="text-sm font-medium text-gray-700">Show:</label>
+                            <select id="limit-select" onchange="changeLimit()" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="50">50 records</option>
+                                <option value="100">100 records</option>
+                                <option value="250">250 records</option>
+                                <option value="500">500 records</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div id="data-table-container" class="overflow-x-auto">
+                        <!-- Table content will be dynamically populated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Research Tools JavaScript -->
+    <script src="~/js/research-tools.js"></script>
+}

@@ -1,8 +1,8 @@
-using Ezana.Models;
+using EzanaEzana.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Ezana.Services
+namespace EzanaEzana.Services
 {
     public interface IGRPVService
     {

@@ -1,8 +1,8 @@
-using Ezana.Models;
+using EzanaEzana.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Ezana.Controllers
+namespace EzanaEzana.Controllers
 {
     public class HomeController : Controller
     {
@@ -22,6 +22,16 @@ namespace Ezana.Controllers
         }
 
         public IActionResult ReactDashboard()
+        {
+            return View();
+        }
+
+        public IActionResult ShadcnDemo()
+        {
+            return View();
+        }
+
+        public IActionResult Playground()
         {
             return View();
         }

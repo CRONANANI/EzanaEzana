@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Component Playground Debug - Ezana Investment Analytics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .debug-panel {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .error {
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .success {
+            color: #059669;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .info {
+            color: #2563eb;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #2563eb;
+        }
+        
+        .console-output {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Component Playground Debug</h1>
+    
+    <div class="debug-panel">
+        <h2>Debug Information</h2>
+        <div id="debug-info">
+            <p>Checking system status...</p>
+        </div>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>Console Output</h2>
+        <div id="console-output" class="console-output"></div>
+        <button onclick="clearConsole()">Clear Console</button>
+        <button onclick="testBundle()">Test Bundle</button>
+    </div>
+    
+    <div class="debug-panel">
+        <h2>React Component Playground Root</h2>
+        <div id="react-playground-root"></div>
+    </div>
+
+    <script>
+        // Capture console output
+        const consoleOutput = document.getElementById('console-output');
+        const debugInfo = document.getElementById('debug-info');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            consoleOutput.textContent += logEntry;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            
+            // Also log to browser console
+            if (type === 'error') {
+                console.error(message);
+            } else if (type === 'warn') {
+                console.warn(message);
+            } else {
+                console.log(message);
+            }
+        }
+        
+        function clearConsole() {
+            consoleOutput.textContent = '';
+        }
+        
+        // Override console methods to capture output
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
+        
+        console.log = function(...args) {
+            originalConsole.log.apply(console, args);
+            log(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalConsole.error.apply(console, args);
+            log(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalConsole.warn.apply(console, args);
+            log(args.join(' '), 'warn');
+        };
+        
+        // Check system status
+        function checkSystemStatus() {
+            log('Checking system status...');
+            
+            // Check if playground bundle exists
+            fetch('js/dist/playground.bundle.js')
+                .then(response => {
+                    if (response.ok) {
+                        log(`✅ Playground bundle found (${response.headers.get('content-length')} bytes)`, 'success');
+                        debugInfo.innerHTML = `
+                            <div class="success">✅ Playground bundle found and accessible</div>
+                            <p><strong>Bundle Size:</strong> ${response.headers.get('content-length')} bytes</p>
+                            <p><strong>Status:</strong> Ready to load</p>
+                        `;
+                    } else {
+                        log(`❌ Playground bundle not accessible (${response.status})`, 'error');
+                        debugInfo.innerHTML = `
+                            <div class="error">❌ Playground bundle not accessible</div>
+                            <p><strong>Status:</strong> HTTP ${response.status}</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    log(`❌ Error accessing playground bundle: ${error.message}`, 'error');
+                    debugInfo.innerHTML = `
+                        <div class="error">❌ Error accessing playground bundle</div>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    `;
+                });
+            
+            // Check if React is available
+            if (typeof React !== 'undefined') {
+                log('✅ React is available', 'success');
+            } else {
+                log('❌ React is not available', 'error');
+            }
+            
+            // Check if ReactDOM is available
+            if (typeof ReactDOM !== 'undefined') {
+                log('✅ ReactDOM is available', 'success');
+            } else {
+                log('❌ ReactDOM is not available', 'error');
+            }
+        }
+        
+        function testBundle() {
+            log('Testing bundle loading...');
+            
+            try {
+                // Try to load the bundle
+                const script = document.createElement('script');
+                script.src = 'js/dist/playground.bundle.js';
+                script.onload = function() {
+                    log('✅ Bundle loaded successfully', 'success');
+                };
+                script.onerror = function() {
+                    log('❌ Bundle failed to load', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                log(`❌ Error testing bundle: ${error.message}`, 'error');
+            }
+        }
+        
+        // Initialize debug panel
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Debug panel initialized');
+            checkSystemStatus();
+        });
+        
+        // Listen for errors
+        window.addEventListener('error', function(event) {
+            log(`❌ JavaScript Error: ${event.message} at ${event.filename}:${event.lineno}`, 'error');
+        });
+        
+        window.addEventListener('unhandledrejection', function(event) {
+            log(`❌ Unhandled Promise Rejection: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

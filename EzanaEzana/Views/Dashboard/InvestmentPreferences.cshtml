@@ -1,4 +1,5 @@
-@model Ezana.ViewModels.InvestmentPreferenceViewModel
+@using EzanaEzana.ViewModels
+@model InvestmentPreferenceViewModel
 @{
     ViewData["Title"] = "Investment Preferences";
 }
@@ -6,78 +7,78 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+            <div class="shadcn-card shadow-lg">
+                <div class="p-4 border-b border-border bg-primary text-primary-foreground">
                     <h2 class="card-title mb-0">Investment Preferences</h2>
                 </div>
-                <div class="card-body">
-                    <p class="lead">
+                <div class="p-6">
+                    <p class="lead text-muted-foreground">
                         Set your investment preferences to get personalized recommendations tailored to your financial goals and risk tolerance.
                     </p>
                     
                     <form asp-action="UpdateInvestmentPreferences" method="post">
                         <div class="mb-4">
-                            <label asp-for="RiskTolerance" class="form-label fw-bold">Risk Tolerance</label>
-                            <div class="mb-2 text-muted">How comfortable are you with investment risk?</div>
+                            <label asp-for="RiskTolerance" class="form-label fw-bold text-foreground">Risk Tolerance</label>
+                            <div class="mb-2 text-muted-foreground">How comfortable are you with investment risk?</div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span>Conservative</span>
-                                <span>Moderate</span>
-                                <span>Aggressive</span>
+                                <span class="text-muted-foreground">Conservative</span>
+                                <span class="text-muted-foreground">Moderate</span>
+                                <span class="text-muted-foreground">Aggressive</span>
                             </div>
                             <input type="range" class="form-range" min="1" max="10" step="1" asp-for="RiskTolerance" id="riskToleranceSlider">
                             <div class="text-center mt-2">
-                                <span id="riskToleranceValue">@Model.RiskTolerance</span>/10
+                                <span id="riskToleranceValue" class="text-primary fw-bold">@Model.RiskTolerance</span>/10
                             </div>
                         </div>
                         
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Portfolio Allocation</label>
-                            <div class="mb-2 text-muted">How would you like to allocate your investments? (Total must equal 100%)</div>
+                            <label class="form-label fw-bold text-foreground">Portfolio Allocation</label>
+                            <div class="mb-2 text-muted-foreground">How would you like to allocate your investments? (Total must equal 100%)</div>
                             
                             <div class="mb-3">
-                                <label asp-for="StockAllocation" class="form-label">Stocks</label>
+                                <label asp-for="StockAllocation" class="form-label text-foreground">Stocks</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control allocation-input" asp-for="StockAllocation" min="0" max="100">
-                                    <span class="input-group-text">%</span>
+                                    <input type="number" class="shadcn-input allocation-input" asp-for="StockAllocation" min="0" max="100">
+                                    <span class="input-group-text bg-muted text-muted-foreground">%</span>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label asp-for="BondAllocation" class="form-label">Bonds</label>
+                                <label asp-for="BondAllocation" class="form-label text-foreground">Bonds</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control allocation-input" asp-for="BondAllocation" min="0" max="100">
-                                    <span class="input-group-text">%</span>
+                                    <input type="number" class="shadcn-input allocation-input" asp-for="BondAllocation" min="0" max="100">
+                                    <span class="input-group-text bg-muted text-muted-foreground">%</span>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label asp-for="CashAllocation" class="form-label">Cash</label>
+                                <label asp-for="CashAllocation" class="form-label text-foreground">Cash</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control allocation-input" asp-for="CashAllocation" min="0" max="100">
-                                    <span class="input-group-text">%</span>
+                                    <input type="number" class="shadcn-input allocation-input" asp-for="CashAllocation" min="0" max="100">
+                                    <span class="input-group-text bg-muted text-muted-foreground">%</span>
                                 </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label asp-for="AlternativeAllocation" class="form-label">Alternative Investments</label>
+                                <label asp-for="AlternativeAllocation" class="form-label text-foreground">Alternative Investments</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control allocation-input" asp-for="AlternativeAllocation" min="0" max="100">
-                                    <span class="input-group-text">%</span>
+                                    <input type="number" class="shadcn-input allocation-input" asp-for="AlternativeAllocation" min="0" max="100">
+                                    <span class="input-group-text bg-muted text-muted-foreground">%</span>
                                 </div>
                             </div>
                             
-                            <div class="alert alert-info mt-2">
+                            <div class="p-4 bg-accent text-accent-foreground rounded-lg mt-2">
                                 <div class="d-flex justify-content-between">
-                                    <span>Total:</span>
-                                    <span id="totalAllocation">100%</span>
+                                    <span class="fw-bold">Total:</span>
+                                    <span id="totalAllocation" class="fw-bold">100%</span>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="mb-4">
-                            <label asp-for="InvestmentHorizon" class="form-label fw-bold">Investment Horizon</label>
-                            <div class="mb-2 text-muted">How long do you plan to invest before needing the money?</div>
-                            <select class="form-select" asp-for="InvestmentHorizon">
+                            <label asp-for="InvestmentHorizon" class="form-label fw-bold text-foreground">Investment Horizon</label>
+                            <div class="mb-2 text-muted-foreground">How long do you plan to invest before needing the money?</div>
+                            <select class="shadcn-input" asp-for="InvestmentHorizon">
                                 <option value="Short-term">Short-term (0-3 years)</option>
                                 <option value="Medium-term">Medium-term (3-7 years)</option>
                                 <option value="Long-term">Long-term (7+ years)</option>
@@ -85,23 +86,23 @@
                         </div>
                         
                         <div class="mb-4">
-                            <label asp-for="InvestmentGoals" class="form-label fw-bold">Investment Goals</label>
-                            <div class="mb-2 text-muted">What are you investing for?</div>
-                            <input type="text" class="form-control" asp-for="InvestmentGoals" placeholder="Retirement, Education, Home Purchase, etc.">
+                            <label asp-for="InvestmentGoals" class="form-label fw-bold text-foreground">Investment Goals</label>
+                            <div class="mb-2 text-muted-foreground">What are you investing for?</div>
+                            <input type="text" class="shadcn-input" asp-for="InvestmentGoals" placeholder="Retirement, Education, Home Purchase, etc.">
                         </div>
                         
                         <div class="mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" asp-for="ESGFocus" id="esgFocus">
-                                <label class="form-check-label" for="esgFocus">
+                                <label class="form-check-label text-foreground" for="esgFocus">
                                     Focus on ESG (Environmental, Social, Governance) investments
                                 </label>
                             </div>
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Save Preferences</button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="shadcn-btn shadcn-btn-primary btn-lg">Save Preferences</button>
+                            <a asp-action="Index" class="shadcn-btn shadcn-btn-outline">Cancel</a>
                         </div>
                     </form>
                 </div>

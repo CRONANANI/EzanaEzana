@@ -1,0 +1,338 @@
+@{
+    ViewData["Title"] = "Portfolio Value Details";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Portfolio Value Details</h1>
+                <p class="text-gray-600 dark:text-gray-400">Comprehensive portfolio analysis and performance metrics</p>
+            </div>
+            <a href="@Url.Action("Index", "DashboardCards")" class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                <i class="bi bi-arrow-left mr-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Portfolio Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Portfolio Value -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Total Value</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-wallet2 text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="total-value">$0.00</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400" id="total-change">Loading...</div>
+        </div>
+
+        <!-- Today's P&L -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Today's P&L</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-red-500 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-graph-up-arrow text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="today-pnl">$0.00</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400" id="today-change">Loading...</div>
+        </div>
+
+        <!-- Total Return -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Total Return</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-trending-up text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="total-return">$0.00</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400" id="return-percentage">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Portfolio Chart -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Portfolio Performance</h3>
+            <div class="flex space-x-2">
+                <select id="time-period" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200">
+                    <option value="3">3 Months</option>
+                    <option value="6">6 Months</option>
+                    <option value="12" selected>12 Months</option>
+                </select>
+            </div>
+        </div>
+        <div class="h-80">
+            <canvas id="portfolio-chart" width="800" height="320"></canvas>
+        </div>
+    </div>
+
+    <!-- Top Holdings -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Top Holdings</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="holdings-grid">
+            <!-- Holdings will be populated here -->
+        </div>
+    </div>
+
+    <!-- Recent Trades -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Recent Trades</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ticker</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Company</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Shares</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700" id="trades-table-body">
+                    <!-- Trades will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading-indicator" class="hidden text-center py-8">
+        <div class="inline-flex items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="ml-3 text-gray-600 dark:text-gray-400">Loading portfolio data...</span>
+        </div>
+    </div>
+
+    <!-- Error Display -->
+    <div id="error-display" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <span id="error-message"></span>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let portfolioChart = null;
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function formatPercentage(value) {
+            return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        function showLoading() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-indicator').classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('error-display').classList.add('hidden');
+        }
+
+        // Update portfolio summary cards
+        function updatePortfolioSummary(data) {
+            document.getElementById('total-value').textContent = formatCurrency(data.TotalValue);
+            
+            const totalChangeElement = document.getElementById('total-change');
+            const totalChangeClass = data.TotalReturn >= 0 ? 'text-green-600' : 'text-red-600';
+            totalChangeElement.className = `text-sm ${totalChangeClass}`;
+            totalChangeElement.innerHTML = `${data.TotalReturn >= 0 ? '+' : ''}${formatCurrency(data.TotalReturn)} (${formatPercentage(data.ReturnPercentage)})`;
+
+            document.getElementById('today-pnl').textContent = formatCurrency(data.TodayPnl);
+            
+            const todayChangeElement = document.getElementById('today-change');
+            const todayChangeClass = data.TodayPnl >= 0 ? 'text-green-600' : 'text-red-600';
+            todayChangeElement.className = `text-sm ${todayChangeClass}`;
+            todayChangeElement.innerHTML = `${data.TodayPnl >= 0 ? '+' : ''}${formatCurrency(data.TodayPnl)} (${formatPercentage(data.TodayPnlPercentage)})`;
+
+            document.getElementById('total-return').textContent = formatCurrency(data.TotalReturn);
+            
+            const returnElement = document.getElementById('return-percentage');
+            const returnClass = data.ReturnPercentage >= 0 ? 'text-green-600' : 'text-red-600';
+            returnElement.className = `text-sm ${returnClass}`;
+            returnElement.innerHTML = `${data.ReturnPercentage >= 0 ? '+' : ''}${formatPercentage(data.ReturnPercentage)}`;
+        }
+
+        // Update top holdings
+        function updateTopHoldings(holdings) {
+            const holdingsGrid = document.getElementById('holdings-grid');
+            holdingsGrid.innerHTML = '';
+
+            holdings.forEach(holding => {
+                const holdingCard = document.createElement('div');
+                holdingCard.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
+                
+                const returnClass = holding.Return >= 0 ? 'text-green-600' : 'text-red-600';
+                
+                holdingCard.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <div class="font-semibold text-gray-900 dark:text-white">${holding.Ticker}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">${holding.Company}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-semibold text-gray-900 dark:text-white">${formatCurrency(holding.Value)}</div>
+                            <div class="text-sm ${returnClass}">${holding.Return >= 0 ? '+' : ''}${formatPercentage(holding.Return)}</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        ${holding.Shares} shares
+                    </div>
+                `;
+                
+                holdingsGrid.appendChild(holdingCard);
+            });
+        }
+
+        // Update recent trades
+        function updateRecentTrades(trades) {
+            const tradesTableBody = document.getElementById('trades-table-body');
+            tradesTableBody.innerHTML = '';
+
+            trades.forEach(trade => {
+                const row = document.createElement('tr');
+                const tradeTypeClass = trade.Type === 'BUY' ? 'text-green-600' : 'text-red-600';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${formatDate(trade.Date)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${trade.Ticker}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${trade.Company}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${tradeTypeClass} font-medium">${trade.Type}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${trade.Shares}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${formatCurrency(trade.Amount)}</td>
+                `;
+                
+                tradesTableBody.appendChild(row);
+            });
+        }
+
+        // Create portfolio chart
+        function createPortfolioChart(data, months) {
+            const ctx = document.getElementById('portfolio-chart').getContext('2d');
+            
+            if (portfolioChart) {
+                portfolioChart.destroy();
+            }
+
+            const labels = data.map(item => {
+                const date = new Date(item.Date);
+                return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+            });
+
+            const values = data.map(item => item.Value);
+
+            portfolioChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: values,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        // Load portfolio data
+        async function loadPortfolioData() {
+            try {
+                showLoading();
+                hideError();
+                
+                const response = await fetch('/api/dashboard/portfolio-value');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update summary cards
+                updatePortfolioSummary(data);
+                
+                // Update holdings
+                updateTopHoldings(data.TopHoldings);
+                
+                // Load portfolio history for chart
+                const timePeriod = document.getElementById('time-period').value;
+                const historyResponse = await fetch(`/api/portfolio/history?months=${timePeriod}`);
+                if (historyResponse.ok) {
+                    const historyData = await historyResponse.json();
+                    createPortfolioChart(historyData, timePeriod);
+                }
+                
+            } catch (error) {
+                console.error('Error loading portfolio data:', error);
+                showError(`Failed to load portfolio data: ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            loadPortfolioData();
+            
+            // Time period change
+            document.getElementById('time-period').addEventListener('change', function() {
+                loadPortfolioData();
+            });
+        });
+    </script>
+}

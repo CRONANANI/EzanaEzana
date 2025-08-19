@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shadcn-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/input.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark ezana-nav mb-3" style="background: linear-gradient(135deg, var(--ezana-primary) 0%, var(--ezana-primary-dark) 100%);">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-graph-up-arrow"></i> Ezana
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index" style="font-weight: 700; font-size: 1.5rem;">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 1.75rem;"></i> 
+                    <span>Ezana</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -23,50 +29,65 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Dashboard" asp-action="Index">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Dashboard" asp-action="Index" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                 <i class="bi bi-speedometer2"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Dashboard" asp-action="InvestmentPreferences">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Research" asp-action="Index" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                <i class="bi bi-search"></i> Research Tools
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Dashboard" asp-action="InvestmentPreferences" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                 <i class="bi bi-sliders"></i> Investment Preferences
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="GRPV" asp-action="Index">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="GRPV" asp-action="Index" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                 <i class="bi bi-bar-chart-fill"></i> GRPV Analysis
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="socialDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="socialDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                 <i class="bi bi-people-fill"></i> Social
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="socialDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="socialDropdown" style="border-radius: 0.75rem; box-shadow: var(--ezana-shadow-lg); border: 1px solid var(--ezana-gray-200);">
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Social" asp-action="Search">
+                                    <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Social" asp-action="Search" style="padding: 0.75rem 1rem; transition: all 0.2s ease;">
                                         <i class="bi bi-search"></i> Find Users
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Social" asp-action="Friends">
+                                    <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Social" asp-action="Friends" style="padding: 0.75rem 1rem; transition: all 0.2s ease;">
                                         <i class="bi bi-person-plus"></i> Friends
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Social" asp-action="Messages">
+                                    <a class="dropdown-item d-flex align-items-center gap-2" asp-controller="Social" asp-action="Messages" style="padding: 0.75rem 1rem; transition: all 0.2s ease;">
                                         <i class="bi bi-chat-dots"></i> Messages
                                     </a>
                                 </li>
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="React">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="React" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                 <i class="bi bi-code-slash"></i> React Demo
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ReactDashboard">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="ReactDashboard" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                 <i class="bi bi-graph-up-arrow"></i> React Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="ShadcnDemo" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                <i class="bi bi-palette-fill"></i> Shadcn Theme
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Playground" style="font-weight: 500; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                <i class="bi bi-puzzle-fill"></i> Component Playground
                             </a>
                         </li>
                     </ul>
@@ -76,21 +97,66 @@
         </nav>
     </header>
     
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill" id="theme-icon"></i>
+    </button>
+    
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - Ezana Investment Analytics - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted" style="background: linear-gradient(135deg, var(--ezana-gray-100) 0%, var(--ezana-gray-200) 100%); border-top: 1px solid var(--ezana-gray-300);">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0" style="color: var(--ezana-gray-600); font-weight: 500;">
+                        &copy; 2024 - Ezana Investment Analytics
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" style="color: var(--ezana-gray-600); text-decoration: none; font-weight: 500; transition: color 0.2s ease;">Privacy Policy</a>
+                </div>
+            </div>
         </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Theme Toggle Script -->
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                themeIcon.className = 'bi bi-moon-fill';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark');
+                themeIcon.className = 'bi bi-sun-fill';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Check for saved theme preference or default to light mode
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+                themeIcon.className = 'bi bi-sun-fill';
+            }
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html> 

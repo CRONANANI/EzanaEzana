@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ezana.ViewModels
+namespace EzanaEzana.ViewModels
 {
     public class DashboardViewModel
     {

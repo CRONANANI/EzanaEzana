@@ -1,14 +1,14 @@
-using Ezana.Data;
-using Ezana.Models;
+using EzanaEzana.Data;
+using EzanaEzana.Models;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using RestSharp;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ezana.Services
+namespace EzanaEzana.Services
 {
     public class GRPVService : IGRPVService
     {

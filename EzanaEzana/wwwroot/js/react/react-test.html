@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React 18 Test</title>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- Load React 18 from CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="text/babel">
+        console.log('=== React 18 Test ===');
+        console.log('React loaded:', typeof React !== 'undefined');
+        console.log('ReactDOM loaded:', typeof ReactDOM !== 'undefined');
+        console.log('React version:', typeof React !== 'undefined' ? React.version : 'Not loaded');
+        console.log('ReactDOM version:', typeof ReactDOM !== 'undefined' ? ReactDOM.version : 'Not loaded');
+        
+        if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+            console.log('✅ React and ReactDOM loaded successfully!');
+            
+            // Test simple React component
+            const TestComponent = () => {
+                const [count, setCount] = React.useState(0);
+                
+                return React.createElement('div', { style: { padding: '20px', textAlign: 'center' } }, [
+                    React.createElement('h1', { key: 'title' }, 'React 19 Test'),
+                    React.createElement('p', { key: 'count' }, `Count: ${count}`),
+                    React.createElement('button', { 
+                        key: 'button',
+                        onClick: () => setCount(count + 1),
+                        style: { 
+                            padding: '10px 20px', 
+                            fontSize: '16px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer'
+                        }
+                    }, 'Increment')
+                ]);
+            };
+            
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(React.createElement(TestComponent));
+            
+        } else {
+            console.error('❌ React or ReactDOM failed to load!');
+            document.getElementById('root').innerHTML = '<h1 style="color: red;">React failed to load!</h1>';
+        }
+    </script>
+</body>
+</html>

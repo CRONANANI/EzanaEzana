@@ -1,4 +1,4 @@
-@model Ezana.ViewModels.GRPVViewModel
+@model EzanaEzana.ViewModels.GRPVViewModel
 @{
     ViewData["Title"] = "GRPV Risk Tolerance Analysis";
 }
@@ -6,14 +6,14 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="display-4">GRPV Risk Tolerance Analysis</h1>
-            <p class="lead">Quantify your market risk tolerance using our proprietary GRPV model (Growth, Risk, Profit, Valuation).</p>
+            <h1 class="display-4 text-primary">GRPV Risk Tolerance Analysis</h1>
+            <p class="lead text-muted-foreground">Quantify your market risk tolerance using our proprietary GRPV model (Growth, Risk, Profit, Valuation).</p>
         </div>
     </div>
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="p-4 bg-destructive text-destructive-foreground rounded-lg alert-dismissible fade show mb-4" role="alert">
             @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -21,32 +21,32 @@
 
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
+            <div class="shadcn-card">
+                <div class="p-4 border-b border-border bg-primary text-primary-foreground">
                     <h5 class="card-title mb-0">Analyze a Stock</h5>
                 </div>
-                <div class="card-body">
-                    <p>Select a stock to analyze its GRPV metrics and determine your risk tolerance based on our proprietary model.</p>
+                <div class="p-6">
+                    <p class="text-muted-foreground">Select a stock to analyze its GRPV metrics and determine your risk tolerance based on our proprietary model.</p>
                     
                     <form method="get" asp-action="Index" class="mb-4">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search for stocks..." name="searchQuery" value="@Model.SearchQuery">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                            <input type="text" class="shadcn-input" placeholder="Search for stocks..." name="searchQuery" value="@Model.SearchQuery">
+                            <button class="shadcn-btn shadcn-btn-outline" type="submit">Search</button>
                         </div>
                     </form>
                     
                     @if (Model.AvailableStocks.Any())
                     {
                         <form method="post" asp-action="Calculate">
-                            <div class="list-group mb-3">
+                            <div class="space-y-2 mb-3">
                                 @foreach (var stock in Model.AvailableStocks)
                                 {
-                                    <button type="submit" name="stockSymbol" value="@stock.Key" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <button type="submit" name="stockSymbol" value="@stock.Key" class="w-full p-3 border border-border rounded-lg hover:bg-muted transition-colors text-left d-flex justify-content-between align-items-center">
                                         <div>
-                                            <strong>@stock.Key</strong>
-                                            <span class="ms-2">@stock.Value</span>
+                                            <strong class="text-foreground">@stock.Key</strong>
+                                            <span class="ms-2 text-muted-foreground">@stock.Value</span>
                                         </div>
-                                        <i class="bi bi-arrow-right"></i>
+                                        <i class="bi bi-arrow-right text-muted-foreground"></i>
                                     </button>
                                 }
                             </div>
@@ -54,7 +54,7 @@
                     }
                     else if (!string.IsNullOrEmpty(Model.SearchQuery))
                     {
-                        <div class="alert alert-info">
+                        <div class="p-4 bg-accent text-accent-foreground rounded-lg">
                             No stocks found matching your search query. Please try a different search term.
                         </div>
                     }
@@ -63,40 +63,40 @@
         </div>
         
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-success text-white">
+            <div class="shadcn-card">
+                <div class="p-4 border-b border-border bg-success text-white">
                     <h5 class="card-title mb-0">Your GRPV Analyses</h5>
                 </div>
-                <div class="card-body">
+                <div class="p-6">
                     @if (Model.UserGRPVModels.Any())
                     {
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table table-hover">
+                                <thead class="bg-muted">
                                     <tr>
-                                        <th>Symbol</th>
-                                        <th>Company</th>
-                                        <th class="text-center">Score</th>
-                                        <th class="text-center">Date</th>
-                                        <th></th>
+                                        <th class="text-foreground">Symbol</th>
+                                        <th class="text-foreground">Company</th>
+                                        <th class="text-center text-foreground">Score</th>
+                                        <th class="text-center text-foreground">Date</th>
+                                        <th class="text-foreground"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var grpv in Model.UserGRPVModels)
                                     {
                                         <tr>
-                                            <td><strong>@grpv.StockSymbol</strong></td>
-                                            <td>@grpv.CompanyName</td>
+                                            <td><strong class="text-foreground">@grpv.StockSymbol</strong></td>
+                                            <td class="text-foreground">@grpv.CompanyName</td>
                                             <td class="text-center">
                                                 @{
                                                     var scoreClass = grpv.OverallScore >= 70 ? "text-success" :
-                                                                    (grpv.OverallScore >= 40 ? "text-warning" : "text-danger");
+                                                                    (grpv.OverallScore >= 40 ? "text-warning" : "text-destructive");
                                                 }
                                                 <span class="@scoreClass">@grpv.OverallScore.ToString("F1")</span>
                                             </td>
-                                            <td class="text-center">@grpv.UpdatedAt.ToString("MM/dd/yyyy")</td>
+                                            <td class="text-center text-foreground">@grpv.UpdatedAt.ToString("MM/dd/yyyy")</td>
                                             <td class="text-end">
-                                                <a asp-action="Details" asp-route-id="@grpv.Id" class="btn btn-sm btn-outline-primary">
+                                                <a asp-action="Details" asp-route-id="@grpv.Id" class="shadcn-btn shadcn-btn-outline btn-sm">
                                                     <i class="bi bi-graph-up"></i> Details
                                                 </a>
                                             </td>

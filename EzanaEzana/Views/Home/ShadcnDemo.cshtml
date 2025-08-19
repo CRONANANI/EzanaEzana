@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Shadcn Theme Demo";
+}
+
+<div id="shadcn-demo-root"></div>
+
+@section Scripts {
+    <script src="~/js/react/react-test.html"></script>
+    <script>
+        // Load the ShadcnDemo component
+        const { createElement } = React;
+        const ShadcnDemo = window.ShadcnDemo;
+        
+        if (ShadcnDemo) {
+            const root = ReactDOM.createRoot(document.getElementById('shadcn-demo-root'));
+            root.render(createElement(ShadcnDemo));
+        } else {
+            console.error('ShadcnDemo component not found');
+        }
+    </script>
+}

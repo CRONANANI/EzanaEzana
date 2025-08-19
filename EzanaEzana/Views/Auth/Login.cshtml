@@ -1,0 +1,100 @@
+@using EzanaEzana.ViewModels
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "_Layout";
+}
+
+<div class="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary">
+                <svg class="h-8 w-8 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-foreground">
+                Sign in to your account
+            </h2>
+            <p class="mt-2 text-center text-sm text-muted-foreground">
+                Or
+                <a asp-action="Register" class="font-medium text-primary hover:text-primary/80">
+                    create a new account
+                </a>
+            </p>
+        </div>
+        
+        <form class="mt-8 space-y-6" asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            
+            <div class="space-y-4">
+                <div>
+                    <label asp-for="Email" class="sr-only">Email address</label>
+                    <input asp-for="Email" type="email" required 
+                           class="shadcn-input" 
+                           placeholder="Email address" />
+                    <span asp-validation-for="Email" class="text-destructive text-sm"></span>
+                </div>
+                <div>
+                    <label asp-for="Password" class="sr-only">Password</label>
+                    <input asp-for="Password" type="password" required 
+                           class="shadcn-input" 
+                           placeholder="Password" />
+                    <span asp-validation-for="Password" class="text-destructive text-sm"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input asp-for="RememberMe" type="checkbox" 
+                           class="h-4 w-4 text-primary focus:ring-primary border-border rounded" />
+                    <label asp-for="RememberMe" class="ml-2 block text-sm text-foreground">
+                        Remember me
+                    </label>
+                </div>
+
+                <div class="text-sm">
+                    <a asp-action="ForgotPassword" class="font-medium text-primary hover:text-primary/80">
+                        Forgot your password?
+                    </a>
+                </div>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-destructive text-sm text-center"></div>
+
+            <div>
+                <button type="submit" 
+                        class="shadcn-btn shadcn-btn-primary w-full">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                    Sign in
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6">
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-border"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-muted text-muted-foreground">New to Ezana?</span>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <a asp-action="Register" 
+                   class="shadcn-btn shadcn-btn-outline w-full">
+                    Create your account
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

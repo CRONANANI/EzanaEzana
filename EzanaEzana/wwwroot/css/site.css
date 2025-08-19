@@ -96,3 +96,281 @@ body {
 .form-range::-ms-thumb {
   background: #0d6efd;
 }
+
+/* Research Tools Styles */
+.quiver-api-section {
+    margin-bottom: 2rem;
+}
+
+.quiver-api-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.quiver-api-description {
+    text-align: center;
+    color: var(--bs-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.125rem;
+}
+
+.quiver-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.quiver-card {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(251, 191, 36, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.quiver-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.quiver-card:hover::before {
+    left: 100%;
+}
+
+.quiver-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(251, 191, 36, 0.4);
+}
+
+.quiver-card.expandable {
+    cursor: pointer;
+}
+
+.quiver-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.quiver-card-icon {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    color: white;
+}
+
+.quiver-card-title {
+    flex: 1;
+    font-weight: 600;
+    color: white;
+    font-size: 1.125rem;
+}
+
+.quiver-card-value {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.quiver-card-toggle {
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+.quiver-card-content {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.quiver-card-content.hidden {
+    display: none;
+}
+
+.quiver-card-description {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Modal Styles */
+.fixed {
+    position: fixed;
+}
+
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.bg-black {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-opacity-50 {
+    background-opacity: 0.5;
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+.hidden {
+    display: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.bg-white {
+    background-color: white;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.max-w-7xl {
+    max-width: 80rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.max-h-\[90vh\] {
+    max-height: 90vh;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+/* Table Styles */
+.min-w-full {
+    min-width: 100%;
+}
+
+.divide-y {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+.divide-gray-200 {
+    border-color: #e5e7eb;
+}
+
+.bg-gray-50 {
+    background-color: #f9fafb;
+}
+
+.px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.py-3 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+.hover\:bg-gray-50:hover {
+    background-color: #f9fafb;
+}
+
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-gray-900 {
+    color: #111827;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .quiver-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .quiver-card {
+        padding: 1rem;
+    }
+    
+    .quiver-card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .quiver-card-title {
+        order: -1;
+    }
+}

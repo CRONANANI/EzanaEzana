@@ -5,7 +5,9 @@ module.exports = {
     entry: {
         main: './wwwroot/js/react/index.js',
         dashboard: './wwwroot/js/react/dashboard-entry.js',
-        home: './wwwroot/js/react/home-entry.js'
+        home: './wwwroot/js/react/home-entry.js',
+        playground: './wwwroot/js/react/playground-entry.js',
+        simplePlayground: './wwwroot/js/react/simple-playground-entry.js'
     },
     output: {
         path: path.resolve(__dirname, 'wwwroot/js/dist'),

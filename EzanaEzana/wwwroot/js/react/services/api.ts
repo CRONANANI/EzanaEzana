@@ -55,6 +55,18 @@ export interface UserProfile {
   };
 }
 
+export interface AuthResponse {
+  success: boolean;
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    publicUsername?: string;
+  };
+}
+
 // API Configuration
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://api.ezana.com' 
@@ -78,7 +90,7 @@ class ApiService {
   private setupInterceptors() {
     // Request interceptor
     this.api.interceptors.request.use(
-      (config: AxiosRequestConfig) => {
+      (config: any) => {
         const token = this.getAuthToken();
         if (token && config.headers) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -103,7 +115,19 @@ class ApiService {
   }
 
   private getAuthToken(): string | null {
-    return localStorage.getItem('auth_token');
+    // Try to get token from localStorage first (for React frontend)
+    let token = localStorage.getItem('auth_token');
+    
+    // If not found, try to get from cookies (for traditional auth)
+    if (!token) {
+      const cookies = document.cookie.split(';');
+      const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth_token='));
+      if (authCookie) {
+        token = authCookie.split('=')[1];
+      }
+    }
+    
+    return token;
   }
 
   private handleApiError(error: AxiosError) {
@@ -139,7 +163,8 @@ class ApiService {
 
   private handleUnauthorized() {
     localStorage.removeItem('auth_token');
-    window.location.href = '/Account/Login';
+    // Redirect to login page
+    window.location.href = '/Auth/Login';
   }
 
   // Generic request methods
@@ -176,6 +201,37 @@ class ApiService {
       return response.data;
     } catch (error) {
       throw error;
+    }
+  }
+
+  // Authentication endpoints
+  async login(credentials: { email: string; password: string }): Promise<AuthResponse> {
+    const response = await this.api.post<AuthResponse>('/api/auth/login', credentials);
+    if (response.data.success && response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
+    }
+    return response.data;
+  }
+
+  async register(userData: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    publicUsername?: string;
+  }): Promise<AuthResponse> {
+    const response = await this.api.post<AuthResponse>('/api/auth/register', userData);
+    if (response.data.success && response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
+    }
+    return response.data;
+  }
+
+  async logout(): Promise<void> {
+    try {
+      await this.post('/api/auth/logout');
+    } finally {
+      localStorage.removeItem('auth_token');
     }
   }
 
@@ -244,36 +300,6 @@ class ApiService {
     return this.put<UserProfile>('/api/user/preferences', preferences);
   }
 
-  // Authentication endpoints
-  async login(credentials: { email: string; password: string }): Promise<ApiResponse<{ token: string; user: UserProfile }>> {
-    const response = await this.post<{ token: string; user: UserProfile }>('/api/auth/login', credentials);
-    if (response.success && response.data.token) {
-      localStorage.setItem('auth_token', response.data.token);
-    }
-    return response;
-  }
-
-  async logout(): Promise<void> {
-    try {
-      await this.post('/api/auth/logout');
-    } finally {
-      localStorage.removeItem('auth_token');
-    }
-  }
-
-  async register(userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }): Promise<ApiResponse<{ token: string; user: UserProfile }>> {
-    const response = await this.post<{ token: string; user: UserProfile }>('/api/auth/register', userData);
-    if (response.success && response.data.token) {
-      localStorage.setItem('auth_token', response.data.token);
-    }
-    return response;
-  }
-
   // Utility methods
   isAuthenticated(): boolean {
     return !!this.getAuthToken();
@@ -282,6 +308,15 @@ class ApiService {
   getAuthHeaders(): Record<string, string> {
     const token = this.getAuthToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
+  // Token management
+  setAuthToken(token: string): void {
+    localStorage.setItem('auth_token', token);
+  }
+
+  clearAuthToken(): void {
+    localStorage.removeItem('auth_token');
   }
 }
 

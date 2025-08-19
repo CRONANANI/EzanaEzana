@@ -1,13 +1,15 @@
-using Ezana.Data;
-using Ezana.Models;
-using Ezana.ViewModels;
+using EzanaEzana.Data;
+using EzanaEzana.Models;
+using EzanaEzana.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ezana.Services
+namespace EzanaEzana.Services
 {
     public class SocialService : ISocialService
     {

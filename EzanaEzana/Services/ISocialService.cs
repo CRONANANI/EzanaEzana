@@ -1,9 +1,9 @@
-using Ezana.Models;
-using Ezana.ViewModels;
+using EzanaEzana.Models;
+using EzanaEzana.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Ezana.Services
+namespace EzanaEzana.Services
 {
     public interface ISocialService
     {

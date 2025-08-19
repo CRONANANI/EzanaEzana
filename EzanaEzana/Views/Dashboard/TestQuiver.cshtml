@@ -1,0 +1,175 @@
+@{
+    ViewData["Title"] = "Quiver API Test";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Quiver API Backend Test</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Congressional Trading Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Congressional Trading</h3>
+            <button onclick="testCongressionalTrading()" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Test API
+            </button>
+            <div id="congressional-result" class="mt-4 text-sm text-gray-600"></div>
+        </div>
+
+        <!-- Government Contracts Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Government Contracts</h3>
+            <button onclick="testGovernmentContracts()" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Test API
+            </button>
+            <div id="government-result" class="mt-4 text-sm text-gray-600"></div>
+        </div>
+
+        <!-- House Trading Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">House Trading</h3>
+            <button onclick="testHouseTrading()" class="w-full bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                Test API
+            </button>
+            <div id="house-result" class="mt-4 text-sm text-gray-600"></div>
+        </div>
+
+        <!-- Senator Trading Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Senator Trading</h3>
+            <button onclick="testSenatorTrading()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Test API
+            </button>
+            <div id="senator-result" class="mt-4 text-sm text-gray-600"></div>
+        </div>
+
+        <!-- Lobbying Activity Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Lobbying Activity</h3>
+            <button onclick="testLobbying()" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                Test API
+            </button>
+            <div id="lobbying-result" class="mt-4 text-sm text-gray-600"></div>
+        </div>
+
+        <!-- Patent Momentum Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Patent Momentum</h3>
+            <button onclick="testPatentMomentum()" class="w-full bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+                Test API
+            </button>
+            <div id="patent-result" class="mt-4 text-sm text-gray-600"></div>
+        </div>
+    </div>
+
+    <!-- Congressperson Portfolio Test -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Congressperson Portfolio Test</h3>
+        <div class="flex gap-4">
+            <input type="text" id="congressperson-name" placeholder="Enter congressperson name" 
+                   class="flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <button onclick="testCongresspersonPortfolio()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                Get Portfolio
+            </button>
+        </div>
+        <div id="portfolio-result" class="mt-4 text-sm text-gray-600"></div>
+    </div>
+
+    <!-- API Health Check -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">API Health Check</h3>
+        <button onclick="testHealth()" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">
+            Check Health
+        </button>
+        <div id="health-result" class="mt-4 text-sm text-gray-600"></div>
+    </div>
+</div>
+
+<script>
+    const API_BASE_URL = '/api/quiver';
+
+    async function testAPI(endpoint, resultId) {
+        const resultDiv = document.getElementById(resultId);
+        resultDiv.innerHTML = 'Testing...';
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            resultDiv.innerHTML = `✅ Success! Retrieved ${data.length} records`;
+            console.log(`${endpoint} data:`, data);
+        } catch (error) {
+            resultDiv.innerHTML = `❌ Error: ${error.message}`;
+            console.error(`Error testing ${endpoint}:`, error);
+        }
+    }
+
+    function testCongressionalTrading() {
+        testAPI('/congressional-trading', 'congressional-result');
+    }
+
+    function testGovernmentContracts() {
+        testAPI('/government-contracts', 'government-result');
+    }
+
+    function testHouseTrading() {
+        testAPI('/house-trading', 'house-result');
+    }
+
+    function testSenatorTrading() {
+        testAPI('/senator-trading', 'senator-result');
+    }
+
+    function testLobbying() {
+        testAPI('/lobbying-activity', 'lobbying-result');
+    }
+
+    function testPatentMomentum() {
+        testAPI('/patent-momentum', 'patent-result');
+    }
+
+    async function testCongresspersonPortfolio() {
+        const name = document.getElementById('congressperson-name').value;
+        if (!name.trim()) {
+            alert('Please enter a congressperson name');
+            return;
+        }
+
+        const resultDiv = document.getElementById('portfolio-result');
+        resultDiv.innerHTML = 'Testing...';
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/congressperson/${encodeURIComponent(name)}/portfolio`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            resultDiv.innerHTML = `✅ Success! Portfolio value: $${(data.Total_Portfolio_Value || 0).toLocaleString()}`;
+            console.log('Portfolio data:', data);
+        } catch (error) {
+            resultDiv.innerHTML = `❌ Error: ${error.message}`;
+            console.error('Error testing portfolio:', error);
+        }
+    }
+
+    async function testHealth() {
+        const resultDiv = document.getElementById('health-result');
+        resultDiv.innerHTML = 'Testing...';
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/health`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.text();
+            resultDiv.innerHTML = `✅ Success! ${data}`;
+        } catch (error) {
+            resultDiv.innerHTML = `❌ Error: ${error.message}`;
+            console.error('Error testing health:', error);
+        }
+    }
+</script>

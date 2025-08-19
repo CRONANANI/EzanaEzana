@@ -1,0 +1,268 @@
+@{
+    ViewData["Title"] = "Dashboard Cards";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard Cards</h1>
+        <p class="text-gray-600 dark:text-gray-400">Real-time portfolio analytics and insights</p>
+    </div>
+
+    <!-- Dashboard Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Total Portfolio Value Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Total Portfolio Value</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-wallet2 text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="portfolio-value">$0.00</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="portfolio-change">Loading...</div>
+            <div class="text-xs text-gray-500 dark:text-gray-500" id="portfolio-updated">Last updated: --</div>
+        </div>
+
+        <!-- Today's P&L Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Today's P&L</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-red-500 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-graph-up-arrow text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="todays-pnl">$0.00</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="pnl-change">Loading...</div>
+            <div class="text-xs text-gray-500 dark:text-gray-500" id="pnl-updated">Last updated: --</div>
+        </div>
+
+        <!-- Top Performer Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Top Performer</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-star-fill text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="top-performer-ticker">--</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="top-performer-return">Loading...</div>
+            <div class="text-xs text-gray-500 dark:text-gray-500" id="top-performer-shares">Shares: --</div>
+        </div>
+
+        <!-- Risk Score Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Risk Score</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-yellow-400 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-shield-check text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="risk-score">--/10</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="risk-change">Loading...</div>
+            <div class="text-xs text-gray-500 dark:text-gray-500" id="risk-category">Category: --</div>
+        </div>
+
+        <!-- Monthly Dividends Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Monthly Dividends</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-teal-400 to-pink-400 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-cash-coin text-xl text-white"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="monthly-dividends">$0.00</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="dividend-change">Loading...</div>
+            <div class="text-xs text-gray-500 dark:text-gray-500" id="next-payment">Next payment: --</div>
+        </div>
+
+        <!-- Asset Allocation Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Asset Allocation</h3>
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-200 to-pink-200 rounded-lg flex items-center justify-center">
+                    <i class="bi bi-pie-chart text-xl text-orange-600"></i>
+                </div>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-2" id="allocation-status">--</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="allocation-summary">Loading...</div>
+            <div class="text-xs text-gray-500 dark:text-gray-500" id="allocation-breakdown">Breakdown: --</div>
+        </div>
+    </div>
+
+    <!-- Refresh Button -->
+    <div class="text-center mb-8">
+        <button id="refresh-all" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center mx-auto">
+            <i class="bi bi-arrow-clockwise mr-2"></i>
+            Refresh All Cards
+        </button>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading-indicator" class="hidden text-center py-8">
+        <div class="inline-flex items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="ml-3 text-gray-600 dark:text-gray-400">Loading dashboard data...</span>
+        </div>
+    </div>
+
+    <!-- Error Display -->
+    <div id="error-display" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <span id="error-message"></span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Dashboard Cards API endpoints
+        const API_ENDPOINTS = {
+            portfolioValue: '/api/dashboard/portfolio-value',
+            todaysPnl: '/api/dashboard/todays-pnl',
+            topPerformer: '/api/dashboard/top-performer',
+            riskScore: '/api/dashboard/risk-score',
+            monthlyDividends: '/api/dashboard/monthly-dividends',
+            assetAllocation: '/api/dashboard/asset-allocation',
+            allCards: '/api/dashboard/all-cards'
+        };
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function formatPercentage(value) {
+            return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleString();
+        }
+
+        function showLoading() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-indicator').classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('error-display').classList.add('hidden');
+        }
+
+        // Update individual cards
+        function updatePortfolioValueCard(data) {
+            document.getElementById('portfolio-value').textContent = formatCurrency(data.TotalValue);
+            
+            const changeElement = document.getElementById('portfolio-change');
+            const changeClass = data.TotalReturn >= 0 ? 'text-green-600' : 'text-red-600';
+            changeElement.className = `text-sm ${changeClass} mb-2`;
+            changeElement.innerHTML = `${data.TotalReturn >= 0 ? '+' : ''}${formatCurrency(data.TotalReturn)} (${formatPercentage(data.ReturnPercentage)})`;
+            
+            document.getElementById('portfolio-updated').textContent = `Last updated: ${formatDate(data.LastUpdated)}`;
+        }
+
+        function updateTodaysPnlCard(data) {
+            const pnlElement = document.getElementById('todays-pnl');
+            const changeElement = document.getElementById('pnl-change');
+            
+            pnlElement.textContent = formatCurrency(data.TodayPnl);
+            
+            const changeClass = data.TodayPnl >= 0 ? 'text-green-600' : 'text-red-600';
+            changeElement.className = `text-sm ${changeClass} mb-2`;
+            changeElement.innerHTML = `${data.TodayPnl >= 0 ? '+' : ''}${formatCurrency(data.TodayPnl)} (${formatPercentage(data.TodayPnlPercentage)})`;
+            
+            document.getElementById('pnl-updated').textContent = `Last updated: ${formatDate(data.LastUpdated)}`;
+        }
+
+        function updateTopPerformerCard(data) {
+            document.getElementById('top-performer-ticker').textContent = data.Ticker;
+            
+            const returnElement = document.getElementById('top-performer-return');
+            const returnClass = data.ReturnPercentage >= 0 ? 'text-green-600' : 'text-red-600';
+            returnElement.className = `text-sm ${returnClass} mb-2`;
+            returnElement.innerHTML = `${data.ReturnAmount >= 0 ? '+' : ''}${formatCurrency(data.ReturnAmount)} (${formatPercentage(data.ReturnPercentage)})`;
+            
+            document.getElementById('top-performer-shares').textContent = `Shares: ${data.Shares}`;
+        }
+
+        function updateRiskScoreCard(data) {
+            document.getElementById('risk-score').textContent = `${data.Score}/10`;
+            
+            const changeElement = document.getElementById('risk-change');
+            const changeClass = data.ScoreChange <= 0 ? 'text-green-600' : 'text-red-600';
+            changeElement.className = `text-sm ${changeClass} mb-2`;
+            changeElement.innerHTML = `${data.ScoreChange >= 0 ? '+' : ''}${data.ScoreChange.toFixed(1)} from last week`;
+            
+            document.getElementById('risk-category').textContent = `Category: ${data.RiskCategory}`;
+        }
+
+        function updateMonthlyDividendsCard(data) {
+            document.getElementById('monthly-dividends').textContent = formatCurrency(data.MonthlyAmount);
+            
+            const changeElement = document.getElementById('dividend-change');
+            const changeClass = data.ChangeAmount >= 0 ? 'text-green-600' : 'text-red-600';
+            changeElement.className = `text-sm ${changeClass} mb-2`;
+            changeElement.innerHTML = `${data.ChangeAmount >= 0 ? '+' : ''}${formatCurrency(data.ChangeAmount)} (${formatPercentage(data.ChangePercentage)})`;
+            
+            document.getElementById('next-payment').textContent = `Next payment: ${formatDate(data.NextPaymentDate)}`;
+        }
+
+        function updateAssetAllocationCard(data) {
+            document.getElementById('allocation-status').textContent = 'Diversified';
+            document.getElementById('allocation-summary').textContent = 'Well balanced';
+            
+            const breakdown = data.Items.map(item => `${item.Label}: ${item.Percentage.toFixed(1)}%`).join(' | ');
+            document.getElementById('allocation-breakdown').textContent = `Breakdown: ${breakdown}`;
+        }
+
+        // Load all dashboard data
+        async function loadAllDashboardData() {
+            try {
+                showLoading();
+                hideError();
+                
+                const response = await fetch(API_ENDPOINTS.allCards);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update all cards
+                updatePortfolioValueCard(data.PortfolioValue);
+                updateTodaysPnlCard(data.PortfolioValue);
+                updateTopPerformerCard(data.TopPerformer);
+                updateRiskScoreCard(data.RiskScore);
+                updateMonthlyDividendsCard(data.MonthlyDividends);
+                updateAssetAllocationCard(data.AssetAllocation);
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showError(`Failed to load dashboard data: ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            loadAllDashboardData();
+            
+            // Refresh button
+            document.getElementById('refresh-all').addEventListener('click', loadAllDashboardData);
+        });
+    </script>
+}
